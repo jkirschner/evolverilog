@@ -113,17 +113,16 @@ class SimulationTrial:
     def __str__(self):
         return "Inputs: %s. Outputs: %s"%(str(self.getInputs()),str(self.getOutputs()))
 
-
 def testOrgs(subdir):
 	"""
 	Run the evolverilog test suite in a subdirectory.
 	"""
 	
 	allResults = {}
-	
-	for file in glob.glob(os.path.join(subdir+'\\', '*.v')):
+
+	for file in glob.glob(os.path.join(subdir, '*.v')):
 		writeSimulation(os.path.join(subdir,'test.v'), file, 2, 1, 'andTest') #Currently assuming AND gate 2in/1out andTest
-		print 'Testing organism ' + file
+		print 'Testing organism '
 		subprocess.call(['iverilog', '-o',  os.path.join(subdir,'test.o'), os.path.join(subdir,'test.v')])
 		process = subprocess.Popen(['vvp', os.path.join(subdir,'test.o')], stdout=subprocess.PIPE)
 		output = process.communicate() #(stdout, stderr)
@@ -135,8 +134,6 @@ def testOrgs(subdir):
 	
 	os.remove(os.path.join(subdir,'test.v'))
 	os.remove(os.path.join(subdir,'test.o'))
-		
-	
 
 if __name__ == "__main__":
 	testOrgs(sys.argv[1])
