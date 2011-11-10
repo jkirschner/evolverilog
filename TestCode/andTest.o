@@ -1,0 +1,45 @@
+#! /c/iverilog/bin/vvp
+:ivl_version "0.9.4 " "(v0_9_4)";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_002C8F28 .scope module, "andTest" "andTest" 2 1;
+ .timescale 0 0;
+P_002CCFCC .param/l "settleDelay" 2 6, +C4<010011100010000>;
+v002CFF48_0 .var "A", 0 0;
+v002C4908_0 .var "B", 0 0;
+v002C4960_0 .var/i "i", 31 0;
+v002C49B8_0 .net "out", 0 0, L_002CFFA0; 1 drivers
+S_002C8FB0 .scope module, "uut" "trivialAnd" 2 8, 2 24, S_002C8F28;
+ .timescale 0 0;
+L_002CFFA0/d .functor AND 1, v002CFF48_0, v002C4908_0, C4<1>, C4<1>;
+L_002CFFA0 .delay (50,50,50) L_002CFFA0/d;
+v002CDEB8_0 .net "A", 0 0, v002CFF48_0; 1 drivers
+v002CE138_0 .net "B", 0 0, v002C4908_0; 1 drivers
+v002CDD18_0 .alias "out", 0 0, v002C49B8_0;
+    .scope S_002C8F28;
+T_0 ;
+    %vpi_call 2 14 "$display", "out,in,in";
+    %set/v v002C4960_0, 0, 32;
+T_0.0 ;
+    %load/v 8, v002C4960_0, 32;
+   %cmpi/s 8, 4, 32;
+    %jmp/0xz T_0.1, 5;
+    %load/v 8, v002C4960_0, 32;
+    %set/v v002C4908_0, 8, 1;
+    %set/v v002CFF48_0, 9, 1;
+    %delay 10000, 0;
+    %vpi_call 2 18 "$display", "%d,%d,%d", v002CFF48_0, v002C4908_0, v002C49B8_0;
+    %ix/load 0, 1, 0;
+    %load/vp0/s 8, v002C4960_0, 32;
+    %set/v v002C4960_0, 8, 32;
+    %jmp T_0.0;
+T_0.1 ;
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "TestCode\andTest.v";
