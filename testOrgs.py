@@ -121,7 +121,7 @@ def testOrgs(subdir):
 	
 	allResults = {}
 	
-	for file in glob.glob(os.path.join(subdir+'\\', '*.v')):
+	for file in glob.glob(os.path.join(subdir, '*.v')):
 		writeSimulation(os.path.join(subdir,'test.v'), file, 2, 1, 'andTest') #Currently assuming AND gate 2in/1out andTest
 		print 'Testing organism ' + file
 		subprocess.call(['iverilog', '-o',  os.path.join(subdir,'test.o'), os.path.join(subdir,'test.v')])
