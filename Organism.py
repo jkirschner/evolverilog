@@ -87,9 +87,7 @@ class Layer:
         return
         
     def __str__(self):
-        contents = ''
-        for gate in self.gates:
-            contents += gate.__str__()+' '
+        contents = ' '.join(str(gate) for gate in self.gates)
         return 'Layer:[ ' + contents + ']'
 
 
