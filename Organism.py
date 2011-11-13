@@ -11,7 +11,7 @@ import random
 
 class Organism:
     def __init__(self, randomInit=False, nLayers=1, nGates=4):
-        self.fitness = 0
+        self.fitness = None
         self.layers = [None]*nLayers
         if randomInit:
             self.randomInitialize(nLayers, nGates)
@@ -43,6 +43,22 @@ class Organism:
         for layer in self.layers:
             contents += layer.__str__() + '\n'
         return 'Organism: {\n' + contents + '}'
+        
+    def evaluate(self,correctResultMap):
+        """
+        Evaluates the fitness function of an organism if it has not
+        already been evaluated.  The correctResultMap determines
+        the correct mapping between inputs and outputs.
+        
+        Args:
+            correctResultMap: testOrgs.SimulationMap
+        
+        Return type: <float> or <int> (number)
+        """
+        if self.fitness is None:
+            return 0 # actually evaluate.  Change this code
+        else:
+            return self.fitness
 
     
 class Layer:
