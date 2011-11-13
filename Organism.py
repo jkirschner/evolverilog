@@ -88,6 +88,12 @@ class Organism:
             
     def getFitness(self):
         return self.fitness
+        
+    def __cmp__(self, other):
+        return self.getFitness() - other.getFitness()
+    
+    def __hash__(self):
+        return id(self)
 
 class BooleanLogicOrganism(Organism):
     
