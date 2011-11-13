@@ -62,7 +62,8 @@ class OrganismManager:
             parent2 = self.selectOrganism()
             newOrganism = parent1.crossover(parent2)
             newGeneration.append(newOrganism)
-        
+
+        # TODO: Should sort self.organisms by fitness here
 
     def populate(self):
         """
