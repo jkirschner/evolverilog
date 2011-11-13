@@ -8,6 +8,7 @@
 """
 
 import random
+import testOrgs
 
 class Organism:
     def __init__(self, randomInit=False, nLayers=1, nGates=4):
@@ -56,11 +57,18 @@ class Organism:
         Return type: <float> or <int> (number)
         """
         if self.fitness is None:
-            return 0 # actually evaluate.  Change this code
+            #change the arguments on the line below or it will not compile
+            #simRes = testOrgs.testOrganism(<FILE1>,<DIR1>,<numIn>,<numOut>,<andTest>,clearFiles=True)
+            #for trial in simRes:
+            #    actualOutput = trial.getOutputs()
+            #    expectedOutput = correctResultMap.getOutputs(trial.getInputs())
+            #do some computation here to calculate the fitness
+            #then return the fitness
+
+            return 0 # Change this code
         else:
             return self.fitness
 
-    
 class Layer:
     def __init__(self, randomInit=False, nGates=4):
         self.gates = [None]*nGates
