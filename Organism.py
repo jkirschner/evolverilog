@@ -70,9 +70,18 @@ class Layer:
 
 
 class Gate:
+    
+    # type followed by number of inputs
+    gateChoices = [
+        ('and',2),
+        ('or',2),
+        ('not',1),
+        ('buf',1)
+        ]
+    
     def __init__(self, randomInit=False, nInputs=4):
         self.inputConnections = []
-        self.type = ''
+        self.gateType = ''
         if randomInit:
             self.randomInitialize(nInputs)
             
@@ -83,15 +92,13 @@ class Gate:
             Randomly initializes its instruction and connection
 						Assumes there are no prior connections
         """
-        choice = random.choice([('and',2),('or',2),('not',1),('buf',1)])
-        self.type = choice[0]
+        choice = random.choice(self.gateChoices)
+        self.gateType = choice[0]
         for connection in range(choice[1]):
             self.inputConnections.append(random.randint(1,nInputs))
             
     def __str__(self):
-        return self.type+str(self.inputConnections)
-        
-        
+        return self.gateType+str(self.inputConnections)
         
 if __name__ == '__main__':
     testOrganism = Organism(randomInit=True)
