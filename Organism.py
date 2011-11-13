@@ -50,8 +50,7 @@ class Organism:
         return 'Organism: {\n' + contents + '}'
     
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
-        
-        return 0.0 # override
+        raise NotImplementedError, 'Override this method in sub-classes.'
         
     def evaluate(self,correctResultMap):
         """
@@ -83,9 +82,12 @@ class Organism:
                 actualOutputs.append(trial.getOutputs())
                 correctOutputs.append(correctResultMap.getResult(currentInput))
 
-            return self.fitnessFunction(inputs,actualOutputs,correctOutputs)
-        else:
-            return self.fitness
+            self.fitness = self.fitnessFunction(inputs,actualOutputs,correctOutputs)
+
+        return self.fitness
+            
+    def getFitness(self):
+        return self.fitness
 
 class BooleanLogicOrganism(Organism):
     

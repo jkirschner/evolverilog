@@ -32,8 +32,7 @@ class OrganismManager:
 
     def __str__(self):
         s = "Population : %i \n" % (self.population)
-        for organism in self.organisms:
-            s += str(organism) + "\n"
+        s += '\n'.join(str(organism) for organism in self.organisms)
         return s
 
     def selectOrganism(self):
