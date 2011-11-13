@@ -73,12 +73,27 @@ def getSimulationResultFromText(txt):
         simResults = line.strip(' ').split(',') # csv format
         s.addTrial(
             SimulationTrial(
-                simResults[0:numberOfOutputs],
-                simResults[numberOfOutputs:]
+                [int(a) for a in simResults[0:numberOfOutputs]],
+                [int(b) for b in simResults[numberOfOutputs:]]
             )
         )
         
     return s
+
+class SimulationMap:
+    
+    def __init__(self,simulationResult):
+        
+        self._map = dict( 
+            ( tuple( t.getInputs() ),tuple( t.getOutputs() ) ) 
+            for t in simulationResult.getTrials()
+            )
+            
+    def getResult(self,inputTuple):
+        return self._map[tuple(inputTuple)]
+    
+    def __str__(self):
+        return str(self._map)
 
 class SimulationResult:
     
@@ -113,27 +128,61 @@ class SimulationTrial:
     def __str__(self):
         return "Inputs: %s. Outputs: %s"%(str(self.getInputs()),str(self.getOutputs()))
 
-def testOrgs(subdir):
+def testOrganism(filepath, subdir, numInputs, numOutputs, 
+    organismModuleName, clearFiles=False, testFileName = 'organismTest'):
+
+    # write the verilog test file
+    writeSimulation(
+        os.path.join(subdir,'%s.v'%testFileName),
+        filepath,
+        numInputs,
+        numOutputs,
+        organismModuleName
+        )
+    
+    print 'Testing organism: %s'%filepath
+
+    # compile the test file
+    subprocess.call([
+        'iverilog', '-o', 
+        os.path.join(subdir,'%s.o'%testFileName),
+        os.path.join(subdir,'%s.v'%testFileName)]
+        )
+    # get the test file results
+    process = subprocess.Popen([
+        'vvp',
+        os.path.join(subdir,'%s.o'%testFileName)],
+        stdout=subprocess.PIPE
+        )
+    # pull output from pipe
+    output = process.communicate() #(stdout, stderr)
+    
+    # convert into a SimulationResult from pipe output
+    simResult = getSimulationResultFromText('\n'.join(output[0].split('\r\n')))
+    print simResult
+    
+    if clearFiles:
+        os.remove(os.path.join(subdir,'%s.o'%testFileName))
+        os.remove(os.path.join(subdir,'%s.v'%testFileName))
+    
+    return simResult
+
+def testOrganisms(subdir,numInputs,numOutputs,organismModuleName,
+    testFileName = 'organismTest'):
 	"""
 	Run the evolverilog test suite in a subdirectory.
 	"""
 	
 	allResults = {}
 
+    # for all files with a verilog extension, test the organism
 	for file in glob.glob(os.path.join(subdir, '*.v')):
-		writeSimulation(os.path.join(subdir,'test.v'), file, 2, 1, 'andTest') #Currently assuming AND gate 2in/1out andTest
-		print 'Testing organism '
-		subprocess.call(['iverilog', '-o',  os.path.join(subdir,'test.o'), os.path.join(subdir,'test.v')])
-		process = subprocess.Popen(['vvp', os.path.join(subdir,'test.o')], stdout=subprocess.PIPE)
-		output = process.communicate() #(stdout, stderr)
-		print output
-		simResult = getSimulationResultFromText('\n'.join(output[0].split('\r\n')))
-		print simResult
-		allResults[file] = simResult
+		allResults[file] = testOrganism(file,subdir,
+                numInputs,numOutputs,organismModuleName)
 	print allResults.keys()
 	
-	os.remove(os.path.join(subdir,'test.v'))
-	os.remove(os.path.join(subdir,'test.o'))
+	os.remove(os.path.join(subdir,'%s.o'%testFileName))
+	os.remove(os.path.join(subdir,'%s.v'%testFileName))
 
 if __name__ == "__main__":
-	testOrgs(sys.argv[1])
+	testOrganisms(sys.argv[1],2,1,'andTest')

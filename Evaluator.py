@@ -7,8 +7,10 @@
     Description :
 """
 
-import OrganismManager
+import testOrgs
 
+# WE MAY BE DELETING THIS
+'''
 class Evaluator:
     def __init__(self):
         pass
@@ -19,7 +21,11 @@ class Evaluator:
             Evaluates the fitness of the input organism, and returns it.
         """
         pass
-
+'''
     
 if __name__ == '__main__':
-    pass
+    
+    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
+    simMap = testOrgs.SimulationMap(defaultResult)
+    print simMap
+    print simMap.getResult((1,1))
