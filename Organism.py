@@ -44,5 +44,26 @@ class Layer:
         """
         return
 
+
+class Gate:
+    """
+        Instructions Manual
+
+        0  :  AND
+        1  :  OR
+        2  :  NOT
+          ...
+    """
+
+    def __init__(self):
+        self.inputConnections = []
+
+    def randomInitialize(self):
+        """
+            Return Type: void
+            Randomly initializes its instruction and connection
+        """
+        
+        
 if __name__ == '__main__':
     pass
