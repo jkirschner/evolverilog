@@ -71,8 +71,7 @@ class OrganismManager:
             Populates <Organism>s and store them in self.organisms
         """
         for i in range(self.population):
-            randOrganism = Organism()
-            randOrganism.randomInitialize(0, 0) # This shouldn't have this input
+            randOrganism = Organism(True)
             self.organisms.append(randOrganism)
 
     def execute(self):
