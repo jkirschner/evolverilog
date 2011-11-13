@@ -58,7 +58,7 @@ class Organism:
         """
         if self.fitness is None:
             #change the arguments on the line below or it will not compile
-            #simRes = testOrgs.testOrganism(<FILE1>,<DIR1>,<numIn>,<numOut>,<andTest>,clearFiles=True)
+            #simRes = testOrgs.testOrganism(<FILE1>,<DIR1>,<numIn>,<numOut>,<andTest>)
             #for trial in simRes:
             #    actualOutput = trial.getOutputs()
             #    expectedOutput = correctResultMap.getOutputs(trial.getInputs())
