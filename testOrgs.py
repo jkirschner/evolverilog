@@ -73,8 +73,8 @@ def getSimulationResultFromText(txt):
         simResults = line.strip(' ').split(',') # csv format
         s.addTrial(
             SimulationTrial(
-                [int(a) for a in simResults[0:numberOfOutputs]],
-                [int(b) for b in simResults[numberOfOutputs:]]
+                tuple(int(a) for a in simResults[0:numberOfOutputs]),
+                tuple(int(b) for b in simResults[numberOfOutputs:])
             )
         )
         

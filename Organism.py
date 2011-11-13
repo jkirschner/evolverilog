@@ -11,7 +11,13 @@ import random
 import testOrgs
 
 class Organism:
-    def __init__(self, randomInit=False, nLayers=1, nGates=4):
+    def __init__(self, verilogFilePath, numInputs, numOutputs, 
+        randomInit=False, nLayers=1, nGates=4, moduleName='organism'):
+        
+        self.verilogFilePath = verilogFilePath
+        self.numInputs = numInputs
+        self.numOutputs = numOutputs
+        self.moduleName = moduleName
         self.fitness = None
         self.layers = [None]*nLayers
         if randomInit:
@@ -40,10 +46,12 @@ class Organism:
         return
         
     def __str__(self):
-        contents = ''
-        for layer in self.layers:
-            contents += layer.__str__() + '\n'
+        contents = '\n'.join(str(layer) for layer in self.layers)
         return 'Organism: {\n' + contents + '}'
+    
+    def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
+        
+        return 0.0 # override
         
     def evaluate(self,correctResultMap):
         """
@@ -58,16 +66,36 @@ class Organism:
         """
         if self.fitness is None:
             #change the arguments on the line below or it will not compile
-            #simRes = testOrgs.testOrganism(<FILE1>,<DIR1>,<numIn>,<numOut>,<andTest>)
-            #for trial in simRes:
-            #    actualOutput = trial.getOutputs()
-            #    expectedOutput = correctResultMap.getOutputs(trial.getInputs())
-            #do some computation here to calculate the fitness
-            #then return the fitness
+            simRes = testOrgs.testOrganism(
+                self.verilogFilePath,
+                'TestCode',
+                self.numInputs,
+                self.numOutputs,
+                self.moduleName)
+            
+            inputs = []
+            actualOutputs = []
+            correctOutputs = []
+            
+            for trial in simRes.getTrials():
+                currentInput = trial.getInputs()
+                inputs.append(currentInput)
+                actualOutputs.append(trial.getOutputs())
+                correctOutputs.append(correctResultMap.getResult(currentInput))
 
-            return 0 # Change this code
+            return self.fitnessFunction(inputs,actualOutputs,correctOutputs)
         else:
             return self.fitness
+
+class BooleanLogicOrganism(Organism):
+    
+    def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
+        
+        score = 0.0
+        for i, aOut, cOut in zip(inputs,actualOutputs,correctOutputs):
+            if aOut == cOut:
+                score += 1.0
+        return score
 
 class Layer:
     def __init__(self, randomInit=False, nGates=4):
@@ -123,5 +151,10 @@ class Gate:
         return self.gateType+str(self.inputConnections)
         
 if __name__ == '__main__':
-    testOrganism = Organism(randomInit=True)
+    testOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
     print testOrganism
+    
+    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
+    simMap = testOrgs.SimulationMap(defaultResult)
+    
+    print testOrganism.evaluate(simMap)
