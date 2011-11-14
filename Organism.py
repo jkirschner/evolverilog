@@ -92,7 +92,9 @@ class Organism:
                 #    and Name?
         
         body = '\n'.join(layerTxts)
-        return verilogFromTemplate(moduleName,moduleArgsTxt,body)
+        fin = open(filepath,'w')
+        fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
+        fin.close()
         
     def __str__(self):
         contents = '\n'.join(str(layer) for layer in self.layers)
@@ -235,13 +237,13 @@ class Gate:
         return self.gateType+str(self.inputConnections)
         
 if __name__ == '__main__':
-    testOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-    print testOrganism
+    #testOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
+    #print testOrganism
     
-    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
-    simMap = testOrgs.SimulationMap(defaultResult)
+    #defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
+    #simMap = testOrgs.SimulationMap(defaultResult)
     
-    print testOrganism.evaluate(simMap)
+    #print testOrganism.evaluate(simMap)
     
-    #testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
-    #print testOrganism.toVerilog('','test')
+    testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
+    testOrganism.toVerilog('organismToVerilogTest.v','test')
