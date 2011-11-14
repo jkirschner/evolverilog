@@ -58,14 +58,6 @@ class Organism:
         """
             Writes Organism to a verilog file.
         """
-<<<<<<< HEAD
-        #module ____;
-        #    input _,_,_,_; (1 line)
-        #    output _,_,_,_; (1 line)
-        #    wire _,_,_,_; (layers-1 lines)
-        #    and Name?
-=======
->>>>>>> e9a51efdfb2187c4cb427080c5abeed9e62f6a5e
         
         moduleInputs = ['input%d'%i for i in xrange(self.numInputs)]
         moduleInputsTxt = ','.join(moduleInputs)
@@ -92,12 +84,6 @@ class Organism:
             # at end of loop, the outputs of the last layer are inputs
             # to the new layer
             layerInputs = layerOutputs
-            
-                #module ____;
-                #    input _,_,_,_; (1 line)
-                #    output _,_,_,_; (1 line)
-                #    wire _,_,_,_; (layers-1 lines)
-                #    and Name?
         
         body = '\n'.join(layerTxts)
         fin = open(filepath,'w')
@@ -169,22 +155,15 @@ class BooleanLogicOrganism(Organism):
             if aOut == cOut:
                 score += 1.0
         return score
-<<<<<<< HEAD
         
     def crossover(self, otherParent):
         """
-=======
-                
-        def crossover():
-            """
->>>>>>> e9a51efdfb2187c4cb427080c5abeed9e62f6a5e
             Return Type: <Organism>
             Crossovers self with another <Organism>, and returns a new
             <Organism>.
             Each layer of the resulting <Organism> is fully inherited from one parent.
             Assumes both gates have the same # of layers, etc.
         """
-<<<<<<< HEAD
         result = BooleanLogicOrganism(self.verilogFilePath, self.numInputs, self.numOutputs,  #change verilogFilePath??
         False, 0, 0, self.moduleName)
         selfLayers = self.getLayers()
@@ -196,10 +175,6 @@ class BooleanLogicOrganism(Organism):
             print selfLayers[index], "\nLAYER crossing over with\n", otherLayers[index], "\nmaking\n", newLayer
             result.addLayer(newLayer)
         return result
-=======
-            randOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-        return randOrganism
->>>>>>> e9a51efdfb2187c4cb427080c5abeed9e62f6a5e
 
 class Layer:
     def __init__(self, randomInit=False, nGates=4):
