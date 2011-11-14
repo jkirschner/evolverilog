@@ -39,7 +39,7 @@ class Organism:
             <Organism>.
             Each layer of the resulting <Organism> is fully inherited from one parent.
         """
-				pass
+        pass
 
     def mutate(self):
         """
@@ -51,11 +51,11 @@ class Organism:
         """
             Writes Organism to a verilog file.
         """
-				#module ____;
-				#    input _,_,_,_; (1 line)
-				#    output _,_,_,_; (1 line)
-				#    wire _,_,_,_; (layers-1 lines)
-				#    and Name?
+        #module ____;
+        #    input _,_,_,_; (1 line)
+        #    output _,_,_,_; (1 line)
+        #    wire _,_,_,_; (layers-1 lines)
+        #    and Name?
         
         
     def __str__(self):
@@ -107,6 +107,12 @@ class Organism:
     
     def __hash__(self):
         return id(self)
+        
+    def getLayers(self):
+        return self.layers
+    
+    def addLayer(self, Layer):
+        self.layers.append(Layer)
 
 class BooleanLogicOrganism(Organism):
     
@@ -117,16 +123,26 @@ class BooleanLogicOrganism(Organism):
             if aOut == cOut:
                 score += 1.0
         return score
-				
-		def crossover():
-		    """
+        
+    def crossover(self, otherParent):
+        """
             Return Type: <Organism>
             Crossovers self with another <Organism>, and returns a new
             <Organism>.
             Each layer of the resulting <Organism> is fully inherited from one parent.
+            Assumes both gates have the same # of layers, etc.
         """
-		    randOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-        return randOrganism
+        result = BooleanLogicOrganism(self.verilogFilePath, self.numInputs, self.numOutputs,  #change verilogFilePath??
+        False, 0, 0, self.moduleName)
+        selfLayers = self.getLayers()
+        otherLayers = otherParent.getLayers()
+        print "self length", len(selfLayers), "\n"
+        print "other length", len(otherLayers)
+        for index in range(len(selfLayers)):
+            newLayer=selfLayers[index].crossover(otherLayers[index])
+            print selfLayers[index], "\nLAYER crossing over with\n", otherLayers[index], "\nmaking\n", newLayer
+            result.addLayer(newLayer)
+        return result
 
 class Layer:
     def __init__(self, randomInit=False, nGates=4):
@@ -141,7 +157,7 @@ class Layer:
     def addGate(self, gate):
         self.gates.append(gate)
         
-    def retGate(self, num):
+    def getGate(self, num):
         return self.gates[num]
 
     def crossover(self, otherLayer):
@@ -151,7 +167,7 @@ class Layer:
         """
         offspring = Layer(nGates=0)
         for gate in range(len(self.gates)):
-            offspring.addGate(random.choice([self.retGate(gate), otherLayer.retGate(gate)]))
+            offspring.addGate(random.choice([self.getGate(gate), otherLayer.getGate(gate)]))
         return offspring
         
     def __str__(self):

@@ -66,7 +66,10 @@ class OrganismManager:
         for i in range(self.population - self.survival):
             parent1 = self.selectOrganism()
             parent2 = self.selectOrganism()
+            print "\nVVVVVVVVVVVVVVVVVVVVVVVVVVV"
+            print parent1, "\nORGANISM crossing over with\n", parent2
             newOrganism = parent1.crossover(parent2)
+            print "TTTTTTTTTTTTTTTTTTTTTTTTTTT"
             newOrganism.evaluate(self._resultMap)
             newGeneration.append(newOrganism)
         self.organisms = newGeneration
