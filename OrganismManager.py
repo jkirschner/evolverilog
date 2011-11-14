@@ -98,18 +98,16 @@ class OrganismManager:
             
     def visualize(self):
         selector.drawOrganismPmfAsCdf(self._selectorPmf)
-
+        
 if __name__ == '__main__':
-    
+    import matplotlib.pyplot as pyplot
+    import time
     defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
-    
+
+    pyplot.ion()
     manager = OrganismManager(15, 5, 10, simMap)
-    manager.populate()
-    manager.visualize()
+    manager.execute(True)
     pyplot.show()
+    pyplot.ioff()
     
-    #print manager
-    # CURRENTLY THROWS ERROR BECAUSE CROSSOVER RETURNS NONE
-    #manager.execute()
-    #print manager

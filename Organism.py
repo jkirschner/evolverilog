@@ -29,7 +29,6 @@ class Organism:
         """
         for layer in range(nLayers):
             self.layers[layer] = Layer(randomInit=True, nGates=nGates)
-        return
 
     def crossover(self, otherOrganism):
         """
@@ -37,7 +36,11 @@ class Organism:
             Crossovers self with another <Organism>, and returns a new
             <Organism>.
         """
-        return
+        
+        # Needs to be implemented #
+        
+        randOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
+        return randOrganism
 
     def mutate(self):
         """
