@@ -73,8 +73,8 @@ def getSimulationResultFromText(txt):
         simResults = line.strip(' ').split(',') # csv format
         s.addTrial(
             SimulationTrial(
-                [int(a) for a in simResults[0:numberOfOutputs]],
-                [int(b) for b in simResults[numberOfOutputs:]]
+                tuple(int(a) for a in simResults[0:numberOfOutputs]),
+                tuple(int(b) for b in simResults[numberOfOutputs:])
             )
         )
         
@@ -129,7 +129,7 @@ class SimulationTrial:
         return "Inputs: %s. Outputs: %s"%(str(self.getInputs()),str(self.getOutputs()))
 
 def testOrganism(filepath, subdir, numInputs, numOutputs, 
-    organismModuleName, clearFiles=False, testFileName = 'organismTest'):
+    organismModuleName, clearFiles=True, testFileName = 'organismTest'):
 
     # write the verilog test file
     writeSimulation(
@@ -177,8 +177,8 @@ def testOrganisms(subdir,numInputs,numOutputs,organismModuleName,
 
     # for all files with a verilog extension, test the organism
 	for file in glob.glob(os.path.join(subdir, '*.v')):
-		allResults[file] = testOrganism(file,subdir,
-                numInputs,numOutputs,organismModuleName)
+		allResults[file] = testOrganism(file,subdir,numInputs,
+            numOutputs,organismModuleName)
 	print allResults.keys()
 	
 	os.remove(os.path.join(subdir,'%s.o'%testFileName))
