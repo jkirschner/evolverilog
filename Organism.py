@@ -10,9 +10,11 @@
 import random
 
 class Organism:
-    def __init__(self, randomInit=False, nLayers=1, nGates=4):
+    def __init__(self, randomInit=False, nLayers=1, nGates=4):  #May need to add nInputs to generalize in the future
         self.fitness = 0
         self.layers = [None]*nLayers
+        self.nLayers=nLayers
+        self.nGates=nGates
         if randomInit:
             self.randomInitialize(nLayers, nGates)
 
@@ -29,6 +31,7 @@ class Organism:
             Return Type: <Organism>
             Crossovers self with another <Organism>, and returns a new
             <Organism>.
+            Each layer of the resulting <Organism> is fully inherited from one parent.
         """
         return
 
@@ -37,6 +40,17 @@ class Organism:
             Return Type: <Organism>
         """
         return
+        
+    def compile(self, file, mainModule='andTest'):
+        """
+            Writes Organism to a verilog file.
+        """
+				#module ____;
+				#    input _,_,_,_; (1 line)
+				#    output _,_,_,_; (1 line)
+				#    wire _,_,_,_; (layers-1 lines)
+				#    and Name?
+        
         
     def __str__(self):
         contents = ''
@@ -54,13 +68,22 @@ class Layer:
     def randomInitialize(self, nGates):
         for gate in range(nGates):
             self.gates[gate] = Gate(randomInit=True, nInputs=nGates)  #In this case, we assume nGates maps to nInputs
+            
+    def addGate(self, gate):
+        self.gates.append(gate)
+        
+    def retGate(self, num):
+        return self.gates[num]
 
     def crossover(self, otherLayer):
         """
             Return Type: <Layer>
             Crossovers self with another <Layer>, and returns a new <Layer>
         """
-        return
+        offspring = Layer(nGates=0)
+        for gate in range(len(self.gates)):
+            offspring.addGate(random.choice([self.retGate(gate), otherLayer.retGate(gate)]))
+        return offspring
         
     def __str__(self):
         contents = ''
@@ -81,7 +104,7 @@ class Gate:
         """
             Return Type: void
             Randomly initializes its instruction and connection
-						Assumes there are no prior connections
+            Assumes there are no prior connections
         """
         choice = random.choice([('and',2),('or',2),('not',1),('buf',1)])
         self.type = choice[0]
