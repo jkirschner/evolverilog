@@ -11,6 +11,10 @@ import random
 import testOrgs
 
 class Organism:
+<<<<<<< HEAD
+    def __init__(self, randomInit=False, nLayers=1, nGates=4):  #May need to add nInputs to generalize in the future
+        self.fitness = 0
+=======
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
         randomInit=False, nLayers=1, nGates=4, moduleName='organism'):
         
@@ -19,6 +23,7 @@ class Organism:
         self.numOutputs = numOutputs
         self.moduleName = moduleName
         self.fitness = None
+>>>>>>> d72f3885ea20f82a747bb445c41f6e5b2863d8f7
         self.layers = [None]*nLayers
         self.nLayers=nLayers
         self.nGates=nGates
@@ -39,7 +44,11 @@ class Organism:
             <Organism>.
             Each layer of the resulting <Organism> is fully inherited from one parent.
         """
-				pass
+        
+        # Needs to be implemented #
+        
+        randOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
+        return randOrganism
 
     def mutate(self):
         """
@@ -117,16 +126,6 @@ class BooleanLogicOrganism(Organism):
             if aOut == cOut:
                 score += 1.0
         return score
-				
-		def crossover():
-		    """
-            Return Type: <Organism>
-            Crossovers self with another <Organism>, and returns a new
-            <Organism>.
-            Each layer of the resulting <Organism> is fully inherited from one parent.
-        """
-		    randOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-        return randOrganism
 
 class Layer:
     def __init__(self, randomInit=False, nGates=4):
