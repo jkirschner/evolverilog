@@ -46,8 +46,7 @@ class Organism:
             <Organism>.
             Each layer of the resulting <Organism> is fully inherited from one parent.
         """
-        pass
-
+        return NotImplementedError, 'Crossover method from Organism must be overwritten.'
         
     def toVerilog(self, filepath, moduleName):
         """
@@ -87,7 +86,7 @@ class Organism:
         
     def __str__(self):
         contents = '\n'.join(str(layer) for layer in self.layers)
-        return 'Organism: {\n' + contents + '}'
+        return 'Organism: {\n%s, fitness: %s}'%(contents,str(self.fitness))
     
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         raise NotImplementedError, 'Override this method in sub-classes.'
@@ -103,7 +102,7 @@ class Organism:
         
         Return type: <float> or <int> (number)
         """
-        if self.fitness is None:
+        if True:#self.fitness is None:
             self.toVerilog(self.verilogFilePath, self.moduleName)
             #change the arguments on the line below or it will not toVerilog
             simRes = testOrgs.testOrganism(
@@ -124,7 +123,7 @@ class Organism:
                 correctOutputs.append(correctResultMap.getResult(currentInput))
 
             self.fitness = self.fitnessFunction(inputs,actualOutputs,correctOutputs)
-
+          
         return self.fitness
             
     def getFitness(self):
@@ -139,21 +138,19 @@ class Organism:
     def getLayers(self):
         return self.layers
     
-    def addLayer(self, Layer):
-        self.layers.append(Layer)
+    def replaceLayer(self, layer, index):
+        self.layers[index] = layer
 
 class BooleanLogicOrganism(Organism):
     
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         
         score = 0.0
-        for i, aOut, cOut in zip(inputs,actualOutputs,correctOutputs):
-            if aOut==cOut:
-                score+=1.0
-            #for a,c in zip(aOut,cOut):
-            #    if a==c:
-            #        score+=1.0
-        return score
+        
+        for i in xrange(self.nGates):
+            if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
+                score += 1.0
+        return (score)**2 + 0.1
         
     def crossover(self, otherParent):
         """
@@ -164,13 +161,14 @@ class BooleanLogicOrganism(Organism):
             Assumes both gates have the same # of layers, etc.
         """
         result = BooleanLogicOrganism(self.verilogFilePath, self.numInputs, self.numOutputs,  #change verilogFilePath??
-        False, 0, 0, self.moduleName)
+            False, self.nLayers, self.nGates, self.moduleName)
+
         selfLayers = self.getLayers()
         otherLayers = otherParent.getLayers()
         for index in range(len(selfLayers)):
             newLayer = selfLayers[index].crossover(otherLayers[index])
             # print selfLayers[index], "\nLAYER crossing over with\n", otherLayers[index], "\nmaking\n", newLayer
-            result.addLayer(newLayer)
+            result.replaceLayer(newLayer,index)
 
         return result
 
@@ -181,13 +179,11 @@ class BooleanLogicOrganism(Organism):
         """
         for layer in self.getLayers():
             for gate in range(len(layer.gates)):
-                a = random.random()
-                if a < .1:
+                if random.random() < .1:
                     #print "before mutation: ", layer.getGates()[gate]
                     layer.getGates()[gate].randomInitialize(self.numInputs)
                     #print "after mutation: ", layer.getGates()[gate]
             
-
 class Layer:
     def __init__(self, randomInit=False, nGates=4):
         self.gates = [None]*nGates
@@ -241,7 +237,9 @@ class Gate:
         ('and',2),
         ('or',2),
         ('not',1),
-        ('buf',1)
+        ('buf',1),
+        ('nand',2),
+        ('xor',2)
         ]
     
     def __init__(self, nInputs, randomInit=False):
@@ -271,5 +269,12 @@ if __name__ == '__main__':
     
     #print testOrganism.evaluate(simMap)
     
-    testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
-    testOrganism.toVerilog('organismToVerilogTest.v','test')  
+    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4, 'fourBool',clearFiles=True)
+    simMap = testOrgs.SimulationMap(defaultResult)
+    
+    a=BooleanLogicOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
+    b = a.evaluate(simMap)
+    print a
+    print b
+    #testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
+    #testOrganism.toVerilog('organismToVerilogTest.v','test')  

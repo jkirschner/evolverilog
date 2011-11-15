@@ -131,6 +131,7 @@ class SimulationTrial:
 def testOrganism(filepath, subdir, numInputs, numOutputs, 
     organismModuleName, clearFiles=True, testFileName = 'organismTest'):
 
+    # verilogTestOutputFile,organismModuleFile,numInputs,numOutputs,organismModuleName=None
     # write the verilog test file
     writeSimulation(
         os.path.join(subdir,'%s.v'%testFileName),
