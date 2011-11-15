@@ -21,7 +21,7 @@ class OrganismManager:
                          each generation
             resultMap  : <testOrgs.SimulationMap> of correct behavior
         """
-        assert (survival > 0), "At least one Organism should survive."
+        #assert (survival > 0), "At least one Organism should survive."
         assert (population > 0), "At least one Organism should exist."
         assert (generation > 0), "The number of evolution should exceed 0."
         assert (population > survival), "population should be greater than " \
@@ -49,7 +49,7 @@ class OrganismManager:
             Selects one <Organism> from the list, with higher possibility
             of choosing the one with higher fitness.
         """
-
+        
         return self._selectorPmf.Random()
 
     def updateOrganisms(self,visualize=False):
@@ -63,10 +63,11 @@ class OrganismManager:
             4. Sort the list by their fitness.
         """
         newGeneration = self.organisms[0:self.survival]
+
         for i in range(self.population - self.survival):
             parent1 = self.selectOrganism()
             parent2 = self.selectOrganism()
-            print parent1, "\nORGANISM crossing over with\n", parent2
+            # print parent1, "\nORGANISM crossing over with\n", parent2
             newOrganism = parent1.crossover(parent2)
             newOrganism.evaluate(self._resultMap)
             newGeneration.append(newOrganism)
@@ -111,7 +112,7 @@ if __name__ == '__main__':
     simMap = testOrgs.SimulationMap(defaultResult)
 
     pyplot.ion()
-    manager = OrganismManager(15, 5, 100, simMap)
+    manager = OrganismManager(20, 0, 1000, simMap)
     manager.execute(True)
     pyplot.show()
     pyplot.ioff()

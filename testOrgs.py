@@ -140,7 +140,7 @@ def testOrganism(filepath, subdir, numInputs, numOutputs,
         organismModuleName
         )
     
-    print 'Testing organism: %s'%filepath
+    # print 'Testing organism: %s'%filepath
 
     # compile the test file
     subprocess.call([
@@ -159,7 +159,7 @@ def testOrganism(filepath, subdir, numInputs, numOutputs,
     
     # convert into a SimulationResult from pipe output
     simResult = getSimulationResultFromText('\n'.join(output[0].split('\r\n')))
-    print simResult
+    # print simResult
     
     if clearFiles:
         os.remove(os.path.join(subdir,'%s.o'%testFileName))
@@ -179,7 +179,7 @@ def testOrganisms(subdir,numInputs,numOutputs,organismModuleName,
 	for file in glob.glob(os.path.join(subdir, '*.v')):
 		allResults[file] = testOrganism(file,subdir,numInputs,
             numOutputs,organismModuleName)
-	print allResults.keys()
+	# print allResults.keys()
 	
 	os.remove(os.path.join(subdir,'%s.o'%testFileName))
 	os.remove(os.path.join(subdir,'%s.v'%testFileName))

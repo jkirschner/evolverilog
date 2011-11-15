@@ -148,9 +148,12 @@ class BooleanLogicOrganism(Organism):
         
         score = 0.0
         for i, aOut, cOut in zip(inputs,actualOutputs,correctOutputs):
-            if aOut == cOut:
-                score += 1.0
-        return score
+            if aOut==cOut:
+                score+=1.0
+            #for a,c in zip(aOut,cOut):
+            #    if a==c:
+            #        score+=1.0
+        return score**2
         
     def crossover(self, otherParent):
         """
@@ -164,12 +167,11 @@ class BooleanLogicOrganism(Organism):
         False, 0, 0, self.moduleName)
         selfLayers = self.getLayers()
         otherLayers = otherParent.getLayers()
-        print "self length", len(selfLayers), "\n"
-        print "other length", len(otherLayers)
         for index in range(len(selfLayers)):
-            newLayer=selfLayers[index].crossover(otherLayers[index])
-            print selfLayers[index], "\nLAYER crossing over with\n", otherLayers[index], "\nmaking\n", newLayer
+            newLayer = selfLayers[index].crossover(otherLayers[index])
+            # print selfLayers[index], "\nLAYER crossing over with\n", otherLayers[index], "\nmaking\n", newLayer
             result.addLayer(newLayer)
+
         return result
 
     def mutate(self):
@@ -178,13 +180,12 @@ class BooleanLogicOrganism(Organism):
             Return Type: <Organism>
         """
         for layer in self.getLayers():
-            for gate in range(layer.nGates):
-                if random.random() < 1.0:
-                    print "before mutation: ", layer.getGates()[gate]
+            for gate in range(len(layer.gates)):
+                a = random.random()
+                if a < .1:
+                    #print "before mutation: ", layer.getGates()[gate]
                     layer.getGates()[gate].randomInitialize(self.numInputs)
-                    print "after mutation: ", layer.getGates()[gate]
-                    raw_input()
-                    
+                    #print "after mutation: ", layer.getGates()[gate]
             
 
 class Layer:

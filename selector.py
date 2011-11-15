@@ -298,7 +298,7 @@ def MakeOrganismPmfFromOrganisms(organisms):
     for organism in organisms:
         pmf.AddOrganism(organism)
     
-    print pmf.Items()
+    #print pmf.Items()
     
     pmf.Normalize()
     
@@ -534,7 +534,7 @@ def drawOrganismPmfAsCdf(orgPmf):
 if __name__ == '__main__':
     import Organism, testOrgs
     testOrganism = Organism.BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-    print testOrganism
+    #print testOrganism
     
     defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
