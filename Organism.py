@@ -153,7 +153,7 @@ class BooleanLogicOrganism(Organism):
             #for a,c in zip(aOut,cOut):
             #    if a==c:
             #        score+=1.0
-        return score**2
+        return score
         
     def crossover(self, otherParent):
         """
