@@ -48,11 +48,6 @@ class Organism:
         """
         pass
 
-    def mutate(self):
-        """
-            Return Type: <Organism>
-        """
-        return
         
     def toVerilog(self, filepath, moduleName):
         """
@@ -109,6 +104,7 @@ class Organism:
         Return type: <float> or <int> (number)
         """
         if self.fitness is None:
+            self.toVerilog(self.verilogFilePath, self.moduleName)
             #change the arguments on the line below or it will not toVerilog
             simRes = testOrgs.testOrganism(
                 self.verilogFilePath,
@@ -176,9 +172,25 @@ class BooleanLogicOrganism(Organism):
             result.addLayer(newLayer)
         return result
 
+    def mutate(self):
+        """
+            Mutates stuff
+            Return Type: <Organism>
+        """
+        for layer in self.getLayers():
+            for gate in range(layer.nGates):
+                if random.random() < 1.0:
+                    print "before mutation: ", layer.getGates()[gate]
+                    layer.getGates()[gate].randomInitialize(self.numInputs)
+                    print "after mutation: ", layer.getGates()[gate]
+                    raw_input()
+                    
+            
+
 class Layer:
     def __init__(self, randomInit=False, nGates=4):
         self.gates = [None]*nGates
+        self.nGates = nGates
         if randomInit:
             self.randomInitialize(nGates)
 
@@ -188,9 +200,12 @@ class Layer:
             
     def addGate(self, gate):
         self.gates.append(gate)
-        
-    def getGate(self, num):
-        return self.gates[num]
+
+    def getGates(self):
+        return self.gates
+    
+    def getGate(self, index):
+        return self.getGates()[index]
 
     def crossover(self, otherLayer):
         """
@@ -256,4 +271,4 @@ if __name__ == '__main__':
     #print testOrganism.evaluate(simMap)
     
     testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
-    testOrganism.toVerilog('organismToVerilogTest.v','test')
+    testOrganism.toVerilog('organismToVerilogTest.v','test')  

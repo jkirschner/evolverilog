@@ -66,14 +66,16 @@ class OrganismManager:
         for i in range(self.population - self.survival):
             parent1 = self.selectOrganism()
             parent2 = self.selectOrganism()
-            print "\nVVVVVVVVVVVVVVVVVVVVVVVVVVV"
             print parent1, "\nORGANISM crossing over with\n", parent2
             newOrganism = parent1.crossover(parent2)
-            print "TTTTTTTTTTTTTTTTTTTTTTTTTTT"
             newOrganism.evaluate(self._resultMap)
             newGeneration.append(newOrganism)
+
+        for organism in newGeneration:
+            organism.mutate()
+            
         self.organisms = newGeneration
-        self.organisms.sort()
+        self.organisms.sort(reverse = True)
         self._updateSelectorPmf()
         if visualize:
             self.visualize()
@@ -85,7 +87,7 @@ class OrganismManager:
         """
         for i in range(self.population):
             # CHANGE THIS LINE
-            randOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
+            randOrganism = BooleanLogicOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
             randOrganism.evaluate(self._resultMap)
             self.organisms.append(randOrganism)
         self._updateSelectorPmf()
@@ -105,11 +107,11 @@ class OrganismManager:
 if __name__ == '__main__':
     import matplotlib.pyplot as pyplot
     
-    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 4, 4, 'fourBool',clearFiles=True)
+    defaultResult = testOrgs.testOrganism('fourBool.v', '', 4, 4, 'fourBool',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
 
     pyplot.ion()
-    manager = OrganismManager(15, 5, 10, simMap)
+    manager = OrganismManager(15, 5, 100, simMap)
     manager.execute(True)
     pyplot.show()
     pyplot.ioff()
