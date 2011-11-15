@@ -105,7 +105,7 @@ class OrganismManager:
 if __name__ == '__main__':
     import matplotlib.pyplot as pyplot
     
-    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
+    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 4, 4, 'fourBool',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
 
     pyplot.ion()
