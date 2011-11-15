@@ -1,0 +1,64 @@
+#! /usr/bin/vvp
+:ivl_version "0.9.2 " "(v0_9_2)";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_0x9a8fc0 .scope module, "organismSimulator" "organismSimulator" 2 4;
+ .timescale 0 0;
+P_0x9aaef8 .param/l "settleDelay" 2 9, +C4<010011100010000>;
+v0x9bcb50_0 .var "Input0", 0 0;
+v0x9bcbf0_0 .var "Input1", 0 0;
+v0x9bcca0_0 .var "Input2", 0 0;
+v0x9bcd50_0 .var "Input3", 0 0;
+v0x9bce30_0 .net "Output0", 0 0, L_0x9bd190; 1 drivers
+v0x9bcee0_0 .net "Output1", 0 0, L_0x9bd2e0; 1 drivers
+v0x9bcf60_0 .net "Output2", 0 0, L_0x9bd3d0; 1 drivers
+v0x9bd010_0 .net "Output3", 0 0, L_0x9bd510; 1 drivers
+v0x9bd110_0 .var/i "i", 31 0;
+S_0x9a90b0 .scope module, "uut" "fourBool" 2 11, 3 1, S_0x9a8fc0;
+ .timescale 0 0;
+L_0x9bd190/d .functor AND 1, v0x9bcb50_0, v0x9bcbf0_0, C4<1>, C4<1>;
+L_0x9bd190 .delay (50,50,50) L_0x9bd190/d;
+L_0x9bd2e0/d .functor OR 1, v0x9bcb50_0, v0x9bcbf0_0, C4<0>, C4<0>;
+L_0x9bd2e0 .delay (50,50,50) L_0x9bd2e0/d;
+L_0x9bd3d0/d .functor NOT 1, v0x9bcca0_0, C4<0>, C4<0>, C4<0>;
+L_0x9bd3d0 .delay (50,50,50) L_0x9bd3d0/d;
+L_0x9bd510/d .functor BUF 1, v0x9bcd50_0, C4<0>, C4<0>, C4<0>;
+L_0x9bd510 .delay (50,50,50) L_0x9bd510/d;
+v0x9aabb0_0 .net "A", 0 0, v0x9bcb50_0; 1 drivers
+v0x9bc650_0 .net "B", 0 0, v0x9bcbf0_0; 1 drivers
+v0x9bc6f0_0 .net "C", 0 0, v0x9bcca0_0; 1 drivers
+v0x9bc790_0 .net "D", 0 0, v0x9bcd50_0; 1 drivers
+v0x9bc840_0 .alias "e", 0 0, v0x9bce30_0;
+v0x9bc8e0_0 .alias "f", 0 0, v0x9bcee0_0;
+v0x9bc9c0_0 .alias "g", 0 0, v0x9bcf60_0;
+v0x9bca60_0 .alias "h", 0 0, v0x9bd010_0;
+    .scope S_0x9a8fc0;
+T_0 ;
+    %vpi_call 2 17 "$display", "out,out,out,out,in,in,in,in";
+    %set/v v0x9bd110_0, 0, 32;
+T_0.0 ;
+    %load/v 8, v0x9bd110_0, 32;
+   %cmpi/s 8, 16, 32;
+    %jmp/0xz T_0.1, 5;
+    %load/v 8, v0x9bd110_0, 32;
+    %set/v v0x9bcd50_0, 8, 1;
+    %set/v v0x9bcca0_0, 9, 1;
+    %set/v v0x9bcbf0_0, 10, 1;
+    %set/v v0x9bcb50_0, 11, 1;
+    %delay 10000, 0;
+    %vpi_call 2 22 "$display", "%d,%d,%d,%d,%d,%d,%d,%d", v0x9bce30_0, v0x9bcee0_0, v0x9bcf60_0, v0x9bd010_0, v0x9bcb50_0, v0x9bcbf0_0, v0x9bcca0_0, v0x9bcd50_0;
+    %ix/load 0, 1, 0;
+    %load/vp0/s 8, v0x9bd110_0, 32;
+    %set/v v0x9bd110_0, 8, 32;
+    %jmp T_0.0;
+T_0.1 ;
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "organismTest.v";
+    "./fourBool.v";

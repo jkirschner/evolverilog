@@ -109,6 +109,7 @@ class Organism:
         Return type: <float> or <int> (number)
         """
         if self.fitness is None:
+            self.toVerilog(self.verilogFilePath, self.moduleName)
             #change the arguments on the line below or it will not toVerilog
             simRes = testOrgs.testOrganism(
                 self.verilogFilePath,
@@ -256,4 +257,4 @@ if __name__ == '__main__':
     #print testOrganism.evaluate(simMap)
     
     testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
-    testOrganism.toVerilog('organismToVerilogTest.v','test')
+    testOrganism.toVerilog('organismToVerilogTest.v','test')  

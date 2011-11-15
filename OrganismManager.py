@@ -73,7 +73,7 @@ class OrganismManager:
             newOrganism.evaluate(self._resultMap)
             newGeneration.append(newOrganism)
         self.organisms = newGeneration
-        self.organisms.sort()
+        self.organisms.sort(reverse = True)
         self._updateSelectorPmf()
         if visualize:
             self.visualize()
@@ -85,7 +85,7 @@ class OrganismManager:
         """
         for i in range(self.population):
             # CHANGE THIS LINE
-            randOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
+            randOrganism = BooleanLogicOrganism('TestCode/fourBool.v',4,4,randomInit=True,moduleName='fourBool')
             randOrganism.evaluate(self._resultMap)
             self.organisms.append(randOrganism)
         self._updateSelectorPmf()
@@ -105,7 +105,7 @@ class OrganismManager:
 if __name__ == '__main__':
     import matplotlib.pyplot as pyplot
     
-    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
+    defaultResult = testOrgs.testOrganism('fourBool.v', 'TestCode', 4, 4, 'fourBool',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
 
     pyplot.ion()

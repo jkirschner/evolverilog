@@ -1,4 +1,4 @@
-module andTest(e,f,g,h,A,B,C,D);
+module fourBool(e,f,g,h,A,B,C,D);
 
     output e,f,g,h;
     input A,B,C,D;
