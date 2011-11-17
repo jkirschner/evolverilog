@@ -14,6 +14,7 @@ import matplotlib.pyplot as pyplot
 import random
 import bisect
 import math
+from copy import deepcopy
 
 class OrganismPmf:
     """Represents a probability mass function.
@@ -29,6 +30,9 @@ class OrganismPmf:
         self.d = d
         self.name = name
         self.scalingFactor = 0
+
+    def Copy(self):
+        return deepcopy(self)
 
     def Values(self):
         """Gets an unsorted sequence of values.
@@ -298,8 +302,6 @@ def MakeOrganismPmfFromOrganisms(organisms):
     for organism in organisms:
         pmf.AddOrganism(organism)
     
-    print pmf.Items()
-    
     pmf.Normalize()
     
     return pmf
@@ -311,7 +313,6 @@ def MakeCdfFromOrganismPmf(orgPmf):
     total = float(sum(ys))
     ys = tuple(y/total for y in ys)
     
-    print xs,ys
     return Cdf(xs,ys)
 
 # customize some matplotlib attributes
@@ -534,7 +535,7 @@ def drawOrganismPmfAsCdf(orgPmf):
 if __name__ == '__main__':
     import Organism, testOrgs
     testOrganism = Organism.BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-    print testOrganism
+    #print testOrganism
     
     defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)

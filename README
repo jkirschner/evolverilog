@@ -1,3 +1,15 @@
-YOU MUST READ THIS
-OTHERWISE YOUR PROGRAM WILL SELF-DESTRUCT
-IN 30 SECONDS
+EvolVerilog
+
+An evolving verilog-coder
+
+Written by
+
+Jared Kirschner
+Shane Moon
+Matt Belland
+Paul Booth
+
+Requires:
+Icarus verilog (iverilog and vvp)
+Python
+matplotlib python module
