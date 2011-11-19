@@ -47,43 +47,25 @@ class Node:
 
     def randomizeGate(self):
         self.gate, inputRange = random.choice(self.gateChoices)
-<<<<<<< HEAD
         self.numberOfInputs = random.randint(inputRange[0], inputRange[1])
-=======
-        self.numberOfInputs = random.randint(*inputRange)
->>>>>>> b08d98e338f71fc27de302fc957ceff0ad62ad57
 
     def makeChildren(self, maxDepth):
         for i in range(self.numberOfInputs):
-<<<<<<< HEAD
             if (self.depth < maxDepth and random.randint(0,9) < 9):
                 self.children.append(Node(self, self.numOrganismInputs,
                                           self.depth + 1, maxDepth))
             else:
                 self.children.append(InputNode(self, self.numOrganismInputs,
                                           self.depth + 1, maxDepth))
-=======
-            if (random.randint(0,9) < 9):
-                self.children.append(Node(self))
-            else:
-                self.children.append(InputNode(self))
->>>>>>> b08d98e338f71fc27de302fc957ceff0ad62ad57
 
 class InputNode(Node):
 
     def randomizeGate(self):
         self.inputIndex = random.randint(0, self.numOrganismInputs - 1)
         self.numberOfInputs = 0
-<<<<<<< HEAD
         self.gate = "input" + str(self.inputIndex)
         
 
 if __name__ == '__main__':
     tree = Tree(4, 3)
     print tree
-=======
-        self.gate = 'input'
-
-if __name__ == '__main__':
-    Tree(3)
->>>>>>> b08d98e338f71fc27de302fc957ceff0ad62ad57
