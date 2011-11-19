@@ -33,13 +33,13 @@ class Node:
 
     def randomizeGate(self):
         self.gate, inputRange = random.choice(self.gateChoices)
-        self.numberOfInputs = random.randint(inputRange)
+        self.numberOfInputs = random.randint(*inputRange)
 
     def makeChildren(self):
         for i in range(self.numberOfInputs):
-            if (random.randint(0,9) < 9)
+            if (random.randint(0,9) < 9):
                 self.children.append(Node(self))
-            else
+            else:
                 self.children.append(InputNode(self))
 
 class InputNode(Node):
@@ -48,3 +48,6 @@ class InputNode(Node):
         self.inputIndex = random.randint(0, self.numOrganismInputs - 1)
         self.numberOfInputs = 0
         self.gate = 'input'
+
+if __name__ == '__main__':
+    Tree(3)
