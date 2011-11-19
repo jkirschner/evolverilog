@@ -18,9 +18,9 @@ class Node:
             ('and',(2,5)),
             ('or',(2,5)),
             ('not',(1,1)),
-            ('buf',(1,1)),
             ('nand',(2,5)),
-            ('xor',(2,5))
+            ('xor',(2,5)),
+            ('buf', (1,1))
             ]
 
     def __init__(self, parent, numOrganismInputs, depth):
@@ -37,11 +37,14 @@ class Node:
 
     def makeChildren(self):
         for i in range(self.numberOfInputs):
-            self.children.append(Node(self))
-
+            if (random.randint(0,9) < 9)
+                self.children.append(Node(self))
+            else
+                self.children.append(InputNode(self))
 
 class InputNode(Node):
 
     def randomizeGate(self):
         self.inputIndex = random.randint(0, self.numOrganismInputs - 1)
-        
+        self.numberOfInputs = 0
+        self.gate = 'input'
