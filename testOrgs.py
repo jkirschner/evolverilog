@@ -163,8 +163,12 @@ def testOrganism(filepath, subdir, numInputs, numOutputs,
     # print simResult
     
     if clearFiles:
-        os.remove(os.path.join(subdir,'%s.o'%testFileName))
-        os.remove(os.path.join(subdir,'%s.v'%testFileName))
+        try:
+            os.remove(os.path.join(subdir,'%s.o'%testFileName))
+            os.remove(os.path.join(subdir,'%s.v'%testFileName))
+        except:
+            print "Error clearing files!"
+            print "Files are to be cleared, but the files probably don't exist."
     
     return simResult
 
