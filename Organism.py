@@ -19,7 +19,7 @@ def verilogFromTemplate(moduleName,moduleArgs,moduleBody):
 class Organism:
     
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, nLayers=1, nGates=4, moduleName='organism'):
+        randomInit=False, nLayers=1, moduleName='organism'):
         
         self.verilogFilePath = verilogFilePath
         self.numInputs = numInputs
@@ -28,16 +28,17 @@ class Organism:
         self.fitness = None
         self.layers = [None]*nLayers
         self.nLayers=nLayers
-        self.nGates=nGates
+        self.nGates=numOutputs
+        
         if randomInit:
-            self.randomInitialize(nLayers, nGates)
+            self.randomInitialize(self.nLayers, self.nGates)
 
     def randomInitialize(self, nLayers, nGates):
         """
             Return Type: void
         """
         for layer in range(nLayers):
-            self.layers[layer] = Layer(randomInit=True, nGates=nGates)
+            self.layers[layer] = Layer(nGates, randomInit=True)
     
     def crossover(self, otherOrganism):
         """
@@ -161,7 +162,7 @@ class BooleanLogicOrganism(Organism):
             Assumes both gates have the same # of layers, etc.
         """
         result = BooleanLogicOrganism(self.verilogFilePath, self.numInputs, self.numOutputs,  #change verilogFilePath??
-            False, self.nLayers, self.nGates, self.moduleName)
+            False, self.nLayers, self.moduleName)
 
         selfLayers = self.getLayers()
         otherLayers = otherParent.getLayers()
@@ -185,7 +186,7 @@ class BooleanLogicOrganism(Organism):
                     #print "after mutation: ", layer.getGates()[gate]
             
 class Layer:
-    def __init__(self, randomInit=False, nGates=4):
+    def __init__(self, nGates, randomInit=False):
         self.gates = [None]*nGates
         self.nGates = nGates
         if randomInit:
