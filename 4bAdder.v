@@ -19,6 +19,5 @@ module 1bAdder(result, carry, a, b, c);
   
   and #50 (carry, a, b, c);
   xor #50 (cmp1, a, b);
-  xor #50 (result, cmp1, c);
-  
+  xor #50 (result, cmp1, c);  
 endmodule
