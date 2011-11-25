@@ -34,6 +34,10 @@ class TreeOrganism(Organism):
         self.maxDepth = maxDepth
         if randomInit:
             self.randomInitialize()
+        
+    def __str__(self):
+        contents = '\n Tree: '.join(str(tree) for tree in self.trees)
+        return 'Trees: [\n %s ]\n' % contents
 
     def randomInitialize(self):
         """
@@ -45,30 +49,36 @@ class TreeOrganism(Organism):
     
     def crossover(self, otherOrganism):
         """
-            Return Type: <Organism>
-            Crossovers self with another <Organism>, and returns a new
-            <Organism>.
-            Each layer of the resulting <Organism> is fully inherited from one parent.
+            Return Type: <TreeOrganism>
+            Crossovers self with another <TreeOrganism>, and returns a new
+            <TreeOrganism>.
         """
-        return NotImplementedError, 'Crossover method from Organism must be overwritten.'        
-        
-    def __str__(self):
-        contents = '\n Tree: '.join(str(tree) for tree in self.trees)
-        return 'Trees: [\n %s ]\n' % contents
+        # Needs to be implemented #
+        print "TreeOrganism->Crossover needs to be implemented."
+        return
 
+    def mutate(self):
+        """
+            Mutates stuff
+            Return Type: <TreeOrganism>
+        """
+        # Needs to be implemented #
+        print "TreeOrganism->mutate needs to be implemented."
+        return
+    
     def toVerilog(self, filepath, moduleName):
         """
             Writes Organism to a verilog file.
         """
-
         # Needs to be implemented #
-        print "I should be implemented!!!!"
+        print "TreeOrganism->toVerilog needs to be implemented."
 
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         """
             Return Type: float
-            NEEDS TO BE IMPLEMENTED
         """
+        # Needs to be implemented #
+        print "TreeOrganism->fitnessFunction needs to be implemented."
         score = 0.0
         return score
         
@@ -77,41 +87,6 @@ class TreeOrganism(Organism):
     
     def replaceTree(self, tree, index):
         self.trees[index] = tree
-
-class BooleanLogicOrganism(Organism):
-    
-       
-    def crossover(self, otherParent):
-        """
-            Return Type: <Organism>
-            Crossovers self with another <Organism>, and returns a new
-            <Organism>.
-            Each layer of the resulting <Organism> is fully inherited from one parent.
-            Assumes both gates have the same # of layers, etc.
-        """
-        result = BooleanLogicOrganism(self.verilogFilePath, self.numInputs, self.numOutputs,  #change verilogFilePath??
-            False, self.nLayers, self.nGates, self.moduleName)
-
-        selfLayers = self.getLayers()
-        otherLayers = otherParent.getLayers()
-        for index in range(len(selfLayers)):
-            newLayer = selfLayers[index].crossover(otherLayers[index])
-            # print selfLayers[index], "\nLAYER crossing over with\n", otherLayers[index], "\nmaking\n", newLayer
-            result.replaceLayer(newLayer,index)
-
-        return result
-
-    def mutate(self):
-        """
-            Mutates stuff
-            Return Type: <Organism>
-        """
-        for layer in self.getLayers():
-            for gate in range(len(layer.gates)):
-                if random.random() < .1:
-                    #print "before mutation: ", layer.getGates()[gate]
-                    layer.getGates()[gate].randomInitialize(self.numInputs)
-                    #print "after mutation: ", layer.getGates()[gate]
         
 if __name__ == '__main__':
     #testOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
