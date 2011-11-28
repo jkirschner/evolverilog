@@ -19,7 +19,7 @@ def verilogFromTemplate(moduleName,moduleArgs,moduleBody):
 class Organism:
     
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, nLayers=1, nGates=4, moduleName='organism'):
+        randomInit=False, nLayers=1, moduleName='organism'):
         
         self.verilogFilePath = verilogFilePath
         self.numInputs = numInputs
@@ -28,16 +28,17 @@ class Organism:
         self.fitness = None
         self.layers = [None]*nLayers
         self.nLayers=nLayers
-        self.nGates=nGates
+        self.nGates=numOutputs
+        
         if randomInit:
-            self.randomInitialize(nLayers, nGates)
+            self.randomInitialize(self.nLayers, self.nGates)
 
     def randomInitialize(self, nLayers, nGates):
         """
             Return Type: void
         """
         for layer in range(nLayers):
-            self.layers[layer] = Layer(randomInit=True, nGates=nGates)
+            self.layers[layer] = Layer(nGates, randomInit=True)
     
     def crossover(self, otherOrganism):
         """
@@ -52,37 +53,7 @@ class Organism:
         """
             Writes Organism to a verilog file.
         """
-        
-        moduleInputs = ['input%d'%i for i in xrange(self.numInputs)]
-        moduleInputsTxt = ','.join(moduleInputs)
-        moduleOutputsTxt = ','.join('output%d'%i for i in xrange(self.numOutputs))
-        moduleArgsTxt = '%s,%s'%(moduleOutputsTxt,moduleInputsTxt)
-        
-        layerTxts = ['\toutput %s;'%moduleOutputsTxt,'\tinput %s;'%moduleInputsTxt]
-        
-        layerInputs = moduleInputs
-        lastLayerIndex = len(self.layers)-1
-        for layerNum,layer in enumerate(self.layers):
-            
-            if layerNum == lastLayerIndex:
-                layerOutputs = ['output%d'%i for i in xrange(self.numOutputs)]
-                layerOutputsTxt = '\twire %s;'%(','.join(layerOutputs))
-            else:
-                layerOutputs = ['layer%d_output%d'%(layerNum,i) for i in xrange(len(layer.gates))]
-                layerOutputsTxt = '\twire %s;'%(','.join(layerOutputs))
-            
-            # call layer with inputs and outputs text
-            layerTxt = layer.toVerilog(layerInputs,layerOutputs)
-            layerTxts.append('\n%s\n\n%s'%(layerOutputsTxt,layerTxt))
-
-            # at end of loop, the outputs of the last layer are inputs
-            # to the new layer
-            layerInputs = layerOutputs
-        
-        body = '\n'.join(layerTxts)
-        fin = open(filepath,'w')
-        fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
-        fin.close()
+        return NotImplementedError, 'toVerilog method from Organism must be overwritten.'
         
     def __str__(self):
         contents = '\n'.join(str(layer) for layer in self.layers)
@@ -161,7 +132,7 @@ class BooleanLogicOrganism(Organism):
             Assumes both gates have the same # of layers, etc.
         """
         result = BooleanLogicOrganism(self.verilogFilePath, self.numInputs, self.numOutputs,  #change verilogFilePath??
-            False, self.nLayers, self.nGates, self.moduleName)
+            False, self.nLayers, self.moduleName)
 
         selfLayers = self.getLayers()
         otherLayers = otherParent.getLayers()
@@ -183,9 +154,46 @@ class BooleanLogicOrganism(Organism):
                     #print "before mutation: ", layer.getGates()[gate]
                     layer.getGates()[gate].randomInitialize(self.numInputs)
                     #print "after mutation: ", layer.getGates()[gate]
+
+    def toVerilog(self, filepath, moduleName):
+        """
+            Writes BooleanLogicOrganism to a verilog file.
+        """
+        
+        moduleInputs = ['input%d'%i for i in xrange(self.numInputs)]
+        moduleInputsTxt = ','.join(moduleInputs)
+        moduleOutputsTxt = ','.join('output%d'%i for i in xrange(self.numOutputs))
+        moduleArgsTxt = '%s,%s'%(moduleOutputsTxt,moduleInputsTxt)
+        
+        layerTxts = ['\toutput %s;'%moduleOutputsTxt,'\tinput %s;'%moduleInputsTxt]
+        
+        layerInputs = moduleInputs
+        lastLayerIndex = len(self.layers)-1
+        for layerNum,layer in enumerate(self.layers):
+            
+            if layerNum == lastLayerIndex:
+                layerOutputs = ['output%d'%i for i in xrange(self.numOutputs)]
+                layerOutputsTxt = '\twire %s;'%(','.join(layerOutputs))
+            else:
+                layerOutputs = ['layer%d_output%d'%(layerNum,i) for i in xrange(len(layer.gates))]
+                layerOutputsTxt = '\twire %s;'%(','.join(layerOutputs))
+            
+            # call layer with inputs and outputs text
+            layerTxt = layer.toVerilog(layerInputs,layerOutputs)
+            layerTxts.append('\n%s\n\n%s'%(layerOutputsTxt,layerTxt))
+
+            # at end of loop, the outputs of the last layer are inputs
+            # to the new layer
+            layerInputs = layerOutputs
+        
+        body = '\n'.join(layerTxts)
+        fin = open(filepath,'w')
+        fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
+        fin.close()
+                    
             
 class Layer:
-    def __init__(self, randomInit=False, nGates=4):
+    def __init__(self, nGates, randomInit=False):
         self.gates = [None]*nGates
         self.nGates = nGates
         if randomInit:

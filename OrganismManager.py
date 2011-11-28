@@ -15,7 +15,7 @@ import matplotlib.pyplot as pyplot
 class OrganismManager:
     def __init__(self, population, survival, threshold, resultMap,
         mutationRate = 0.1, verilogWriteFileName = 'fourBool.v',
-        verilogModuleName = 'fourBool'):
+        verilogModuleName = 'fourBool', nLayers = 1):
         """
             organisms  : <List> of <Organism>s
             population : the maximum number of <Organism>s
@@ -35,12 +35,26 @@ class OrganismManager:
         self.threshold = threshold
         
         self._resultMap = resultMap
+        self._numberOfInputs = resultMap.getNumberOfInputs()
+        self._numberOfOutputs = resultMap.getNumberOfOutputs()
+        
         self._selectorPmf = None
+        
+        self.verilogWriteFileName = verilogWriteFileName
+        self.verilogModuleName = verilogModuleName
+        
+        self.nLayers = nLayers
 
     def __str__(self):
         s = "Population : %i \n" % (self.population)
         s += '\n'.join(str(organism) for organism in self.organisms)
         return s
+
+    def getNumberOfInputs(self):
+        return self._numberOfInputs
+    
+    def getNumberOfOutputs(self):
+        return self._numberOfOutputs
 
     def _updateSelectorPmf(self):
         
@@ -74,7 +88,7 @@ class OrganismManager:
             4. Sort the list by their fitness.
         """
         newGeneration = self.organisms[0:self.survival]
-
+        
         for i in range(self.population - self.survival):
             p1,p2 = self.generateParents()
             # print parent1, "\nORGANISM crossing over with\n", parent2
@@ -82,7 +96,7 @@ class OrganismManager:
             newOrganism.mutate()
             newOrganism.evaluate(self._resultMap)
             newGeneration.append(newOrganism)
-            
+        
         self.organisms = newGeneration
         self.organisms.sort(reverse = True)
         self._updateSelectorPmf()
@@ -95,9 +109,17 @@ class OrganismManager:
             Return Type: void
             Populates <Organism>s and store them in self.organisms
         """
+        
         for i in range(self.population):
             # CHANGE THIS LINE
-            randOrganism = BooleanLogicOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
+            randOrganism = BooleanLogicOrganism(
+                self.verilogWriteFileName,
+                self.getNumberOfInputs(),
+                self.getNumberOfOutputs(),
+                randomInit=True,
+                moduleName=self.verilogModuleName,
+                nLayers = self.nLayers
+            )
             randOrganism.evaluate(self._resultMap)
             self.organisms.append(randOrganism)
         self.organisms.sort(reverse = True)
@@ -112,10 +134,9 @@ class OrganismManager:
             MainLoop
         """
         self.populate(visualize)
-        #for i in range(self.generation):
         while self.organisms[0].getFitness() < self.threshold:
             self.updateOrganisms(visualize)
-        self.organisms[0].toVerilog('Winner.v', 'fourBool')
+        self.organisms[0].toVerilog('Winner.v', self.verilogModuleName)
             
     def visualize(self):
         selector.drawOrganismPmfAsCdf(self._selectorPmf)
@@ -123,12 +144,15 @@ class OrganismManager:
 if __name__ == '__main__':
     import matplotlib.pyplot as pyplot
     
-    #defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4,'fourBool',clearFiles=True)
-    defaultResult = testOrgs.testOrganism('4bAdder.v', '', 8, 5,'4bAdder',clearFiles=True)
+    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4,'fourBool',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
-
+    
     pyplot.ion()
-    manager = OrganismManager(10, 1, 16, simMap)
+    manager = OrganismManager(10,2,16,simMap,
+        verilogWriteFileName = 'fourBool.v',
+        verilogModuleName = 'fourBool',
+        nLayers = 1)
+        
     manager.execute(True)
     pyplot.show()
     pyplot.ioff()

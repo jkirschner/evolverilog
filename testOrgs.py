@@ -88,27 +88,47 @@ class SimulationMap:
             ( tuple( t.getInputs() ),tuple( t.getOutputs() ) ) 
             for t in simulationResult.getTrials()
             )
+        
+        self._numberOfInputs = simulationResult.getNumberOfInputs()
+        self._numberOfOutputs = simulationResult.getNumberOfOutputs()
             
     def getResult(self,inputTuple):
         return self._map[tuple(inputTuple)]
     
+    def getNumberOfInputs(self):
+        return self._numberOfInputs
+    
+    def getNumberOfOutputs(self):
+        return self._numberOfOutputs
+    
     def __str__(self):
-        return str(self._map)
+        trials = []
+        for simInput, simOutput in self._map.iteritems():
+            trials.append(
+                '\tInput: %s. Output: %s.'%(str(simInput),str(simOutput)) 
+            )
+        return 'Simulation Map:\n%s'%('\n'.join(trials))
 
 class SimulationResult:
     
     def __init__(self,numInputs,numOutputs):
         
         self._trials = []
-        self._numberOfInputs = 0
-        self._numberOfOutputs = 0
+        self._numberOfInputs = numInputs
+        self._numberOfOutputs = numOutputs
     
     def addTrial(self,simTrial):
         self._trials.append(simTrial)
         
     def getTrials(self):
         return self._trials
-        
+    
+    def getNumberOfInputs(self):
+        return self._numberOfInputs
+    
+    def getNumberOfOutputs(self):
+        return self._numberOfOutputs
+    
     def __str__(self):
         return '\n'.join(["Trial %d: %s"%(i,str(trial)) for i,trial in enumerate(self.getTrials())])
 

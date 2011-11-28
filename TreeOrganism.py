@@ -2,8 +2,13 @@
     Class       : Computer Architecture, FALL 2011, Olin College
     Project     : 
     Author      : Shane Moon, Paul Booth
+<<<<<<< HEAD
     Date        : 11/19/2011
     File Name   : TreeOrganism.py
+=======
+    Date        : 11/24/2011
+    File Name   : Tree.py
+>>>>>>> 9aef8d4bf61cfa1bfd7557da640f6fe7a0857e9d
     Description :
 """
 
@@ -11,6 +16,8 @@ import random
 import Tree
 from Organism import Organism
 import testOrgs
+from Organism import *
+from Tree import *
 
 def verilogFromTemplate(moduleName,moduleArgs,moduleBody):
 
@@ -19,17 +26,27 @@ def verilogFromTemplate(moduleName,moduleArgs,moduleBody):
     return template%(moduleName,moduleArgs,moduleBody)
 
 class TreeOrganism(Organism):
+<<<<<<< HEAD
     treeCrossOverProbability = .7
 
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
         randomInit=False, maxDepth=10, inputProbability = .2, moduleName='organism'):
         # inputProbability should be reconsidered, and not just passed in
         # We should develop a way to decide what this value should be
+=======
+    
+    def __init__(self, verilogFilePath, numInputs, numOutputs, 
+        randomInit=False, maxDepth=4, moduleName='organism'):
+        """
+            Assumption: numOutputs = numTrees
+        """
+>>>>>>> 9aef8d4bf61cfa1bfd7557da640f6fe7a0857e9d
         self.verilogFilePath = verilogFilePath
         self.numInputs = numInputs
         self.numOutputs = numOutputs
         self.moduleName = moduleName
         self.fitness = None
+<<<<<<< HEAD
         self.maxDepth = maxDepth
         self.inputProbability = inputProbability
         self.trees = []        
@@ -40,20 +57,37 @@ class TreeOrganism(Organism):
     def __str__(self):
         contents = '\n'.join(str(tree) for tree in self.trees)
         return 'TreeOrganism: {\n%s, fitness: %s}'%(contents, str(fitness))
+=======
+        self.trees = [None]*numOutputs
+        self.maxDepth = maxDepth
+        if randomInit:
+            self.randomInitialize()
+        
+    def __str__(self):
+        contents = '\n Tree: '.join(str(tree) for tree in self.trees)
+        return 'Trees: [\n %s ]\n' % contents
+>>>>>>> 9aef8d4bf61cfa1bfd7557da640f6fe7a0857e9d
 
     def randomInitialize(self):
         """
             Return Type: void
         """
+<<<<<<< HEAD
         for i in range(self.numOutputs):
             self.trees.append(Tree(self.numInputs, self.maxDepth,
                                    self.inputProbability))
+=======
+        for tree in range(self.numOutputs):
+            self.trees[tree] = Tree(numOrganismInputs = self.numInputs,
+                                    maxDepth = self.maxDepth)
+>>>>>>> 9aef8d4bf61cfa1bfd7557da640f6fe7a0857e9d
     
     def crossover(self, otherOrganism):
         """
             Return Type: <TreeOrganism>
             Crossovers self with another <TreeOrganism>, and returns a new
             <TreeOrganism>.
+<<<<<<< HEAD
         """
         result = TreeOrganism(self.verilogFilePath, self.numInputs,#change verilogFilePath??
                               self.numOutputs, False, self.maxDepth,
@@ -181,106 +215,43 @@ class BooleanLogicOrganism(Organism):
             <Organism>.
             Each layer of the resulting <Organism> is fully inherited from one parent.
             Assumes both gates have the same # of layers, etc.
+=======
+>>>>>>> 9aef8d4bf61cfa1bfd7557da640f6fe7a0857e9d
         """
-        result = BooleanLogicOrganism(self.verilogFilePath, self.numInputs, self.numOutputs,  #change verilogFilePath??
-            False, self.nLayers, self.nGates, self.moduleName)
-
-        selfLayers = self.getLayers()
-        otherLayers = otherParent.getLayers()
-        for index in range(len(selfLayers)):
-            newLayer = selfLayers[index].crossover(otherLayers[index])
-            # print selfLayers[index], "\nLAYER crossing over with\n", otherLayers[index], "\nmaking\n", newLayer
-            result.replaceLayer(newLayer,index)
-
-        return result
+        # Needs to be implemented #
+        print "TreeOrganism->Crossover needs to be implemented."
+        return
 
     def mutate(self):
         """
             Mutates stuff
-            Return Type: <Organism>
+            Return Type: <TreeOrganism>
         """
-        for layer in self.getLayers():
-            for gate in range(len(layer.gates)):
-                if random.random() < .1:
-                    #print "before mutation: ", layer.getGates()[gate]
-                    layer.getGates()[gate].randomInitialize(self.numInputs)
-                    #print "after mutation: ", layer.getGates()[gate]
-            
-class Layer:
-    def __init__(self, randomInit=False, nGates=4):
-        self.gates = [None]*nGates
-        self.nGates = nGates
-        if randomInit:
-            self.randomInitialize(nGates)
-
-    def randomInitialize(self, nGates):
-        for gate in range(nGates):
-            self.gates[gate] = Gate(nInputs=nGates,randomInit=True)  #In this case, we assume nGates maps to nInputs
-            
-    def addGate(self, gate):
-        self.gates.append(gate)
-
-    def getGates(self):
-        return self.gates
+        # Needs to be implemented #
+        print "TreeOrganism->mutate needs to be implemented."
+        return
     
-    def getGate(self, index):
-        return self.getGates()[index]
+    def toVerilog(self, filepath, moduleName):
+        """
+            Writes Organism to a verilog file.
+        """
+        # Needs to be implemented #
+        print "TreeOrganism->toVerilog needs to be implemented."
 
-    def crossover(self, otherLayer):
+    def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         """
-            Return Type: <Layer>
-            Crossovers self with another <Layer>, and returns a new <Layer>
+            Return Type: float
         """
-        offspring = Layer(nGates=0)
-        for gate in range(len(self.gates)):
-            offspring.addGate(random.choice([self.getGate(gate), otherLayer.getGate(gate)]))
-        return offspring
+        # Needs to be implemented #
+        print "TreeOrganism->fitnessFunction needs to be implemented."
+        score = 0.0
+        return score
         
-    def __str__(self):
-        contents = ' '.join(str(gate) for gate in self.gates)
-        return 'Layer:[ ' + contents + ']'
-        
-    def toVerilog(self,inputNames,outputNames):
-        
-        txtLines = []
-        for i,gate in enumerate(self.gates):
-            gateInputs = ','.join(inputNames[c] for c in gate.inputConnections)
-            gateOutput = outputNames[i]
-            gateArgs = '%s,%s'%(gateOutput,gateInputs)
-            txtLines.append('\t%s #%d (%s);'%(gate.gateType,gate.__delay__,gateArgs))
-        return '\n'.join(txtLines)
-
-class Gate:
+    def getTrees(self):
+        return self.trees
     
-    __delay__ = 50
-    
-    # type followed by number of inputs
-    gateChoices = [
-        ('and',2),
-        ('or',2),
-        ('not',1),
-        ('buf',1),
-        ('nand',2),
-        ('xor',2)
-        ]
-    
-    def __init__(self, nInputs, randomInit=False):
-        self.inputConnections = []
-        self.gateType = ''
-        if randomInit:
-            self.randomInitialize(nInputs)
-            
-    def randomInitialize(self, nInputs):
-        """
-            Return Type: void
-            Randomly initializes its instruction and connection
-            Assumes there are no prior connections
-        """
-        self.gateType,gateInputs = random.choice(self.gateChoices)
-        self.inputConnections = [random.randint(0,nInputs-1) for i in xrange(gateInputs)]
-            
-    def __str__(self):
-        return self.gateType+str(self.inputConnections)
+    def replaceTree(self, tree, index):
+        self.trees[index] = tree
         
 if __name__ == '__main__':
     #testOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
@@ -290,6 +261,7 @@ if __name__ == '__main__':
     #simMap = testOrgs.SimulationMap(defaultResult)
     
     #print testOrganism.evaluate(simMap)
+<<<<<<< HEAD
     org = TreeOrganism( "", 4, 4, 
         False, 10, 5, 'organism')
     print org
@@ -300,5 +272,15 @@ if __name__ == '__main__':
 ##    b = a.evaluate(simMap)
 ##    print a
 ##    print b
+=======
+    
+    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4, 'fourBool',clearFiles=True)
+    simMap = testOrgs.SimulationMap(defaultResult)
+    
+    a = TreeOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
+    b = a.evaluate(simMap)
+    print a
+    print b
+>>>>>>> 9aef8d4bf61cfa1bfd7557da640f6fe7a0857e9d
     #testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
     #testOrganism.toVerilog('organismToVerilogTest.v','test')  
