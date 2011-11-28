@@ -11,14 +11,8 @@ import random
 import Tree
 from Organism import Organism
 import testOrgs
-from Organism import *
-from Tree import *
-
-def verilogFromTemplate(moduleName,moduleArgs,moduleBody):
-
-    template = """module %s(%s);\n\n%s\n\nendmodule"""
-    
-    return template%(moduleName,moduleArgs,moduleBody)
+import Organism
+import Tree
 
 class TreeOrganism(Organism):
 
