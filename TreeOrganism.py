@@ -17,7 +17,7 @@ class TreeOrganism(Organism):
     treeCrossOverProbability = .7
 
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, maxDepth=10, inputProbability = .2, moduleName='organism'):
+        randomInit=False, maxDepth=3, inputProbability = .2, moduleName='organism'):
         # inputProbability should be reconsidered, and not just passed in
         # We should develop a way to decide what this value should be
 
@@ -34,7 +34,7 @@ class TreeOrganism(Organism):
             self.randomInitialize()
             
     def __str__(self):
-        contents = '\n'.join(str(tree) for tree in self.trees)
+        contents = '\n-\n'.join(str(tree) for tree in self.trees)
         return 'TreeOrganism: {\n%s, fitness: %s}'%(contents, str(self.fitness))
         
 
@@ -46,7 +46,7 @@ class TreeOrganism(Organism):
             self.trees.append(Tree(self.numInputs, self.maxDepth,
                                    self.inputProbability))
     
-    def crossover(self, otherOrganism):
+    def crossover(self, otherParent):
         """
             Return Type: <TreeOrganism>
             Crossovers self with another <TreeOrganism>, and returns a new
@@ -58,12 +58,14 @@ class TreeOrganism(Organism):
         for i in range(self.numOutputs):
             selfTree = self.trees[i]
             otherTree = otherParent.trees[i]
-            if (random.random() > treeCrossOverProbability):
+            if (random.random() > TreeOrganism.treeCrossOverProbability):
+                print "not crosovered"
                 if (random.random() < .5):
                     result.trees.append(selfTree)
                 else:
                     result.trees.append(otherTree)
             else:
+                print "crosovered"
                 if (random.random() < .5):
                     result.trees.append(selfTree.crossover(otherTree))
                 else:
@@ -103,20 +105,23 @@ class TreeOrganism(Organism):
         self.trees[index] = tree
         
 if __name__ == '__main__':
-    #testOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-    #print testOrganism
     
-    #defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
-    #simMap = testOrgs.SimulationMap(defaultResult)
-    
-    #print testOrganism.evaluate(simMap)
-    
-    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4, 'fourBool',clearFiles=True)
+    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 2, 'fourBool',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
     
-    a = TreeOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
+    a = TreeOrganism('fourBool.v',4,2,randomInit=True,moduleName='fourBool')
     b = a.evaluate(simMap)
-    print a
-    print b
-    #testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
-    #testOrganism.toVerilog('organismToVerilogTest.v','test')  
+    #print a
+    #print b
+
+    tree1 = TreeOrganism('fourBool.v',4,2,randomInit=True,moduleName='fourBool')
+    tree2 = TreeOrganism('fourBool.v',4,2,randomInit=True,moduleName='fourBool')
+
+    print "--------------------------------------"
+    print tree1
+    print "--------------------------------------"
+    print tree2
+    print "--------------------------------------"
+    print tree1.crossover(tree2)
+    print "--------------------------------------"
+    
