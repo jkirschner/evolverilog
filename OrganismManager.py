@@ -148,7 +148,7 @@ if __name__ == '__main__':
     simMap = testOrgs.SimulationMap(defaultResult)
     
     pyplot.ion()
-    manager = OrganismManager(10,1,16,simMap,
+    manager = OrganismManager(10,2,16,simMap,
         verilogWriteFileName = 'fourBool.v',
         verilogModuleName = 'fourBool',
         nLayers = 1)
