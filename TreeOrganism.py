@@ -55,7 +55,7 @@ class TreeOrganism(Organism):
         """
         # Needs to be implemented #
         print "TreeOrganism->Crossover needs to be implemented."
-        return
+        return otherOrganism
 
     def mutate(self):
         """
