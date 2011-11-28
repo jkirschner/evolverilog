@@ -2,12 +2,14 @@
     Class       : Computer Architecture, FALL 2011, Olin College
     Project     : 
     Author      : Shane Moon, Paul Booth
-    Date        : 11/10/2011
-    File Name   : OrganismManager.py
+    Date        : 11/19/2011
+    File Name   : TreeOrganism.py
     Description :
 """
 
 import random
+import Tree
+from Organism import Organism
 import testOrgs
 
 def verilogFromTemplate(moduleName,moduleArgs,moduleBody):
@@ -16,38 +18,62 @@ def verilogFromTemplate(moduleName,moduleArgs,moduleBody):
     
     return template%(moduleName,moduleArgs,moduleBody)
 
-class Organism:
-    
+class TreeOrganism(Organism):
+    treeCrossOverProbability = .7
+
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, nLayers=1, nGates=4, moduleName='organism'):
-        
+        randomInit=False, maxDepth=10, inputProbability = .2, moduleName='organism'):
+        # inputProbability should be reconsidered, and not just passed in
+        # We should develop a way to decide what this value should be
         self.verilogFilePath = verilogFilePath
         self.numInputs = numInputs
         self.numOutputs = numOutputs
         self.moduleName = moduleName
         self.fitness = None
-        self.layers = [None]*nLayers
-        self.nLayers=nLayers
-        self.nGates=nGates
+        self.maxDepth = maxDepth
+        self.inputProbability = inputProbability
+        self.trees = []        
+        
         if randomInit:
-            self.randomInitialize(nLayers, nGates)
+            self.randomInitialize()
 
-    def randomInitialize(self, nLayers, nGates):
+    def __str__(self):
+        contents = '\n'.join(str(tree) for tree in self.trees)
+        return 'TreeOrganism: {\n%s, fitness: %s}'%(contents, str(fitness))
+
+    def randomInitialize(self):
         """
             Return Type: void
         """
-        for layer in range(nLayers):
-            self.layers[layer] = Layer(randomInit=True, nGates=nGates)
+        for i in range(self.numOutputs):
+            self.trees.append(Tree(self.numInputs, self.maxDepth,
+                                   self.inputProbability))
     
     def crossover(self, otherOrganism):
         """
-            Return Type: <Organism>
-            Crossovers self with another <Organism>, and returns a new
-            <Organism>.
-            Each layer of the resulting <Organism> is fully inherited from one parent.
+            Return Type: <TreeOrganism>
+            Crossovers self with another <TreeOrganism>, and returns a new
+            <TreeOrganism>.
         """
-        return NotImplementedError, 'Crossover method from Organism must be overwritten.'
-        
+        result = TreeOrganism(self.verilogFilePath, self.numInputs,#change verilogFilePath??
+                              self.numOutputs, False, self.maxDepth,
+                              self.inputProbability, self.moduleName)
+        for i in range(self.numOutputs):
+            selfTree = self.trees[i]
+            otherTree = otherParent.trees[i]
+            if (random.random() > treeCrossOverProbability):
+                if (random.random() < .5):
+                    result.trees.append(selfTree)
+                else:
+                    result.trees.append(otherTree)
+            else:
+                if (random.random() < .5):
+                    result.trees.append(selfTree.crossover(otherTree))
+                else:
+                    result.trees.append(otherTree.crossover(selfTree))
+
+        return result
+
     def toVerilog(self, filepath, moduleName):
         """
             Writes Organism to a verilog file.
@@ -58,10 +84,9 @@ class Organism:
         moduleOutputsTxt = ','.join('output%d'%i for i in xrange(self.numOutputs))
         moduleArgsTxt = '%s,%s'%(moduleOutputsTxt,moduleInputsTxt)
         
-        layerTxts = ['\toutput %s;'%moduleOutputsTxt,'\tinput %s;'%moduleInputsTxt]
+        treeTxts = ['\toutput %s;'%moduleOutputsTxt,'\tinput %s;'%moduleInputsTxt]
         
-        layerInputs = moduleInputs
-        lastLayerIndex = len(self.layers)-1
+        
         for layerNum,layer in enumerate(self.layers):
             
             if layerNum == lastLayerIndex:
@@ -84,9 +109,6 @@ class Organism:
         fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
         fin.close()
         
-    def __str__(self):
-        contents = '\n'.join(str(layer) for layer in self.layers)
-        return 'Organism: {\n%s, fitness: %s}'%(contents,str(self.fitness))
     
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         raise NotImplementedError, 'Override this method in sub-classes.'
@@ -268,13 +290,15 @@ if __name__ == '__main__':
     #simMap = testOrgs.SimulationMap(defaultResult)
     
     #print testOrganism.evaluate(simMap)
-    
-    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4, 'fourBool',clearFiles=True)
-    simMap = testOrgs.SimulationMap(defaultResult)
-    
-    a=BooleanLogicOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
-    b = a.evaluate(simMap)
-    print a
-    print b
+    org = TreeOrganism( "", 4, 4, 
+        False, 10, 5, 'organism')
+    print org
+##    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4, 'fourBool',clearFiles=True)
+##    simMap = testOrgs.SimulationMap(defaultResult)
+##    
+##    a=BooleanLogicOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
+##    b = a.evaluate(simMap)
+##    print a
+##    print b
     #testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
     #testOrganism.toVerilog('organismToVerilogTest.v','test')  
