@@ -13,7 +13,6 @@ class Tree:
     def __init__(self, numOrganismInputs, maxDepth, inputProbability):
         self.root = Node(None, numOrganismInputs, 0, maxDepth, inputProbability)
 
-
     def __str__(self):
         return self.root.__str__()
 
@@ -42,7 +41,6 @@ class Tree:
     def toList(self):
         return self.root.toList()
         
-    
 class Node:
     # Could include gate probabilities or weights so that buf is less likely
     # than and or xor
@@ -94,7 +92,7 @@ class Node:
             if (child == oldNode):
                 newNode.parent = self
                 self.children[i] = newNode
-                found =True
+                found = True
         if (not found):
             raise("hell. The replaceChild is broken and couldn't find" \
                   " the old node.")
