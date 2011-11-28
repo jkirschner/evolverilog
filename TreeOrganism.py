@@ -8,10 +8,9 @@
 """
 
 import random
-import Tree
-from Organism import Organism
 import testOrgs
-import Tree
+from Organism import *
+from Tree import *
 
 class TreeOrganism(Organism):
 
