@@ -34,7 +34,10 @@ class Tree:
         #childNode = random.choice(nodeList)
         #otherNode = deepcopy(random.choice(otherNodeList))
         # we need a deepcopy because we don't want to alter original Tree
-        childNode.replaceSelf(otherNode)
+        if (childNodeIndex == 0):
+            child.root = otherNode
+        else:
+            childNode.replaceSelf(otherNode)
         return child
 
     def toList(self):
@@ -96,15 +99,15 @@ class Node:
                 self.children[i] = newNode
                 found = True
         if (not found):
-            raise "hell. The replaceChild is broken and couldn't find" \
-                  " the old node."
+            raise("hell. The replaceChild is broken and couldn't find" \
+                  " the old node.")
 
     def replaceSelf(self, newNode):
         if (self.parent):
             self.parent.replaceChild(self, newNode)
         else:
-            self = newNode
-            self.parent = None
+            raise "Uh oh. This shouldn't happen. You shouldn't replace root" \
+                  " nodes. @ replaceSelf"
 
     def randomizeGate(self):
         self.gate, inputRange = random.choice(self.gateChoices)
@@ -172,19 +175,21 @@ if __name__ == '__main__':
     tree = Tree(4, 3, .9)
     print "tree1"
     print tree
-    print tree.toList()
+    print "------------------"
     tree2 = Tree(4,3,1)
     print "tree2"
     print tree2
+    print "------------------"
 ##    print tree2.toList()
     #tree.root.replaceChild(tree.root.children[0], tree2.root)
     newtree = tree.crossover(tree2)
     print "\nnew tree"
     print newtree
-##    for i in range(10):
-##        newtree = newtree.crossover(tree)
-##        print i
-##        print newtree
+    print "------------------"
+    for i in range(10):
+        newtree = newtree.crossover(tree)
+        print i
+        print newtree
 ##    newtree2 = tree2.crossover(tree)
 ##    print "new tree2"
 ##    print newtree2
@@ -194,5 +199,6 @@ if __name__ == '__main__':
 ##    print tree2
         
     tree.root.replaceSelf(tree2.root)
+
     print tree
     print tree.toVerilog()
