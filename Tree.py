@@ -10,8 +10,10 @@ import random
 from copy import deepcopy
 
 class Tree:
-    def __init__(self, numOrganismInputs, maxDepth, inputProbability):
+    def __init__(self, numOrganismInputs, maxDepth, inputProbability,
+        treeNum=0):
         self.root = Node(None, numOrganismInputs, 0, maxDepth, inputProbability)
+        self.treeNum = treeNum # fix
 
     def __str__(self):
         return self.root.__str__()
@@ -37,6 +39,9 @@ class Tree:
 
     def toList(self):
         return self.root.toList()
+        
+    def toVerilog(self):
+        return tree.root.toVerilog(self.treeNum,0)[0]
         
 class Node:
     # Could include gate probabilities or weights so that buf is less likely
@@ -116,13 +121,52 @@ class Node:
                 self.children.append(InputNode(self, self.numOrganismInputs,
                                           self.depth + 1, maxDepth, self.inputProbability))
 
+    def toVerilog(self,treeNum,branchStr):
+        """
+        Each node needs to know the branch number of its children's
+        outputs and the tree number (or id).
+        
+        Each node needs to know its branch number in the tree and
+        the tree number (or id).
+        
+        Outputs: verilog,outputStr
+        """
+        
+        verilogRes = []
+        inputs = []
+        for childNum, child in enumerate(self.children):
+            v,output = child.toVerilog(treeNum,'%s%d'%(branchStr,childNum))
+            verilogRes.append(v)
+            inputs.append(output)
+        
+        inputStr = ','.join(inputs)
+        outputStr = 'output%d_branch%s'%(treeNum,branchStr)
+        verilogRes.append('\t%s #50 (%s,%s);'%(self.gate,outputStr,inputStr))
+        return ('\n'.join(verilogRes),outputStr)
+
 class InputNode(Node):
 
     def randomizeGate(self):
         self.inputIndex = random.randint(0, self.numOrganismInputs - 1)
         self.numberOfInputs = 0
         self.gate = "input" + str(self.inputIndex)
+    
+    def toVerilog(self,treeNum,branchStr):
+        """
+        Each node needs to know the branch number of its children's
+        outputs and the tree number (or id).
         
+        Each node needs to know its branch number in the tree and
+        the tree number (or id).
+        
+        Outputs: verilog,outputStr
+        """
+        
+        return ('\t// input comment','input%d'%self.inputIndex)
+    
+    #def toVerilog(self,levelName):
+    #    
+    #    return '%s%d_%s'%(levelName,self.depth,self.gate)
 
 if __name__ == '__main__':
     tree = Tree(4, 3, .9)
@@ -148,5 +192,7 @@ if __name__ == '__main__':
 ##    print tree
 ##    print "tree2"
 ##    print tree2
+        
     tree.root.replaceSelf(tree2.root)
     print tree
+    print tree.toVerilog()

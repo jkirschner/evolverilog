@@ -36,7 +36,6 @@ class TreeOrganism(Organism):
     def __str__(self):
         contents = '\n'.join(str(tree) for tree in self.trees)
         return 'TreeOrganism: {\n%s, fitness: %s}'%(contents, str(self.fitness))
-        
 
     def randomInitialize(self):
         """
@@ -85,7 +84,25 @@ class TreeOrganism(Organism):
             Writes Organism to a verilog file.
         """
         # Needs to be implemented #
-        print "TreeOrganism->toVerilog needs to be implemented."
+        # print "TreeOrganism->toVerilog needs to be implemented."
+        
+        moduleInputs = ['input%d'%i for i in xrange(self.numInputs)]
+        moduleInputsTxt = ','.join(moduleInputs)
+        moduleOutputsTxt = ','.join('output%d'%i for i in xrange(self.numOutputs))
+        moduleArgsTxt = '%s,%s'%(moduleOutputsTxt,moduleInputsTxt)
+        
+        layerTxts = ['\toutput %s;'%moduleOutputsTxt,'\tinput %s;'%moduleInputsTxt]
+        
+        for tree in self.trees:
+            # self.gate -> what type of gate it is
+            layerTxts.append(tree.toVerilog())
+        
+        body = '\n'.join(layerTxts)
+        
+        #fin = open(filepath,'w')
+        #fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
+        #fin.close()
+        print verilogFromTemplate(moduleName,moduleArgsTxt,body)
 
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         """
@@ -103,20 +120,5 @@ class TreeOrganism(Organism):
         self.trees[index] = tree
         
 if __name__ == '__main__':
-    #testOrganism = BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
-    #print testOrganism
-    
-    #defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
-    #simMap = testOrgs.SimulationMap(defaultResult)
-    
-    #print testOrganism.evaluate(simMap)
-    
-    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4, 'fourBool',clearFiles=True)
-    simMap = testOrgs.SimulationMap(defaultResult)
-    
-    a = TreeOrganism('fourBool.v',4,4,randomInit=True,moduleName='fourBool')
-    b = a.evaluate(simMap)
-    print a
-    print b
-    #testOrganism = BooleanLogicOrganism('',4,4,randomInit=True,moduleName='')
-    #testOrganism.toVerilog('organismToVerilogTest.v','test')  
+
+    TreeOrganism('delme.v',5,4).toVerilog('','')
