@@ -95,16 +95,15 @@ class TreeOrganism(Organism):
         
         layerTxts = ['\toutput %s;'%moduleOutputsTxt,'\tinput %s;'%moduleInputsTxt]
         
-        for tree in self.trees:
+        for idx,tree in enumerate(self.trees):
             # self.gate -> what type of gate it is
-            layerTxts.append(tree.toVerilog())
+            layerTxts.append(tree.toVerilog(idx)+'\n')
         
         body = '\n'.join(layerTxts)
         
-        #fin = open(filepath,'w')
-        #fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
-        #fin.close()
-        print verilogFromTemplate(moduleName,moduleArgsTxt,body)
+        fin = open(filepath,'w')
+        fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
+        fin.close()
 
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         """
@@ -123,16 +122,16 @@ class TreeOrganism(Organism):
         
 if __name__ == '__main__':
     
-    defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 2, 'fourBool',clearFiles=True)
-    simMap = testOrgs.SimulationMap(defaultResult)
+    #defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 2, 'fourBool',clearFiles=True)
+    #simMap = testOrgs.SimulationMap(defaultResult)
     
-    a = TreeOrganism('fourBool.v',4,2,randomInit=True,moduleName='fourBool')
-    b = a.evaluate(simMap)
+    #a = TreeOrganism('fourBool.v',4,2,randomInit=True,moduleName='fourBool')
+    #b = a.evaluate(simMap)
     #print a
     #print b
 
-    tree1 = TreeOrganism('fourBool.v',4,2,randomInit=True,moduleName='fourBool')
-    tree2 = TreeOrganism('fourBool.v',4,2,randomInit=True,moduleName='fourBool')
+    tree1 = TreeOrganism('tree.v',4,2,randomInit=True,moduleName='tree')
+    tree2 = TreeOrganism('tree.v',4,2,randomInit=True,moduleName='tree')
 
     print "--------------------------------------"
     print tree1
@@ -141,4 +140,7 @@ if __name__ == '__main__':
     print "--------------------------------------"
     print tree1.crossover(tree2)
     print "--------------------------------------"
+    print "--------------------------------------"
+    print tree1
+    print tree1.toVerilog('delme.v','delme')
     

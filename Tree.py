@@ -43,8 +43,8 @@ class Tree:
     def toList(self):
         return self.root.toList()
         
-    def toVerilog(self):
-        return tree.root.toVerilog(self.treeNum,0)[0]
+    def toVerilog(self,treeNum):
+        return self.root.toVerilog(treeNum,'0')[0]
         
 class Node:
     # Could include gate probabilities or weights so that buf is less likely
@@ -143,7 +143,12 @@ class Node:
             inputs.append(output)
         
         inputStr = ','.join(inputs)
-        outputStr = 'output%d_branch%s'%(treeNum,branchStr)
+        
+        if len(branchStr) > 1:
+            outputStr = 'output%d_branch%s'%(treeNum,branchStr)
+        else:
+            outputStr = 'output%d'%treeNum
+            
         verilogRes.append('\t%s #50 (%s,%s);'%(self.gate,outputStr,inputStr))
         return ('\n'.join(verilogRes),outputStr)
 
