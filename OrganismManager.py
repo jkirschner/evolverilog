@@ -7,10 +7,6 @@
     Description :
 """
 
-<<<<<<< HEAD
-from TreeOrganism import *
-=======
->>>>>>> 24ddc10f87e1b95019cb6e84804983e122ae29cd
 import random
 import selector
 import matplotlib.pyplot as pyplot
@@ -120,29 +116,14 @@ class OrganismManager:
         
         for i in range(self.population):
             # CHANGE THIS LINE
-<<<<<<< HEAD
-##            randOrganism = BooleanLogicOrganism(
-##                self.verilogWriteFileName,
-##                self.getNumberOfInputs(),
-##                self.getNumberOfOutputs(),
-##                randomInit=True,
-##                moduleName=self.verilogModuleName,
-##                nLayers = self.nLayers
-##            )
-            randOrganism = TreeOrganism(
-=======
             randOrganism = self.organismType(
->>>>>>> 24ddc10f87e1b95019cb6e84804983e122ae29cd
+
                 self.verilogWriteFileName,
                 self.getNumberOfInputs(),
                 self.getNumberOfOutputs(),
                 randomInit=True,
                 moduleName=self.verilogModuleName,
-<<<<<<< HEAD
-                maxDepth=3
-=======
                 **self.kwargs
->>>>>>> 24ddc10f87e1b95019cb6e84804983e122ae29cd
             )
             randOrganism.evaluate(self._resultMap)
             self.organisms.append(randOrganism)
