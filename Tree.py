@@ -10,10 +10,8 @@ import random
 from copy import deepcopy
 
 class Tree:
-    def __init__(self, numOrganismInputs, maxDepth, inputProbability,
-        treeNum=0):
+    def __init__(self, numOrganismInputs, maxDepth, inputProbability):
         self.root = Node(None, numOrganismInputs, 0, maxDepth, inputProbability)
-        self.treeNum = treeNum # fix
 
     def __str__(self):
         return self.root.__str__()
@@ -28,23 +26,17 @@ class Tree:
         childNodeIndex = random.randint(0,len(nodeList)-1)
         childNode = nodeList[childNodeIndex]
         otherNodeIndex = random.randint(0, len(otherNodeList)-1)
-        otherNode = otherNodeList[otherNodeIndex]
+        otherNode = deepcopy(otherNodeList[otherNodeIndex])
         print "child node index: " + str(childNodeIndex)
         print "other node index: " + str(otherNodeIndex)
         #childNode = random.choice(nodeList)
         #otherNode = deepcopy(random.choice(otherNodeList))
         # we need a deepcopy because we don't want to alter original Tree
-        if (childNodeIndex == 0):
-            child.root = otherNode
-        else:
-            childNode.replaceSelf(otherNode)
+        childNode.replaceSelf(otherNode)
         return child
 
     def toList(self):
         return self.root.toList()
-        
-    def toVerilog(self,treeNum):
-        return self.root.toVerilog(treeNum,'0')[0]
         
 class Node:
     # Could include gate probabilities or weights so that buf is less likely
@@ -99,15 +91,15 @@ class Node:
                 self.children[i] = newNode
                 found = True
         if (not found):
-            raise("hell. The replaceChild is broken and couldn't find" \
-                  " the old node.")
+            raise "hell. The replaceChild is broken and couldn't find" \
+                  " the old node."
 
     def replaceSelf(self, newNode):
         if (self.parent):
             self.parent.replaceChild(self, newNode)
         else:
-            raise "Uh oh. This shouldn't happen. You shouldn't replace root" \
-                  " nodes. @ replaceSelf"
+            self = newNode
+            self.parent = None
 
     def randomizeGate(self):
         self.gate, inputRange = random.choice(self.gateChoices)
@@ -124,73 +116,27 @@ class Node:
                 self.children.append(InputNode(self, self.numOrganismInputs,
                                           self.depth + 1, maxDepth, self.inputProbability))
 
-    def toVerilog(self,treeNum,branchStr):
-        """
-        Each node needs to know the branch number of its children's
-        outputs and the tree number (or id).
-        
-        Each node needs to know its branch number in the tree and
-        the tree number (or id).
-        
-        Outputs: verilog,outputStr
-        """
-        
-        verilogRes = []
-        inputs = []
-        for childNum, child in enumerate(self.children):
-            v,output = child.toVerilog(treeNum,'%s%d'%(branchStr,childNum))
-            verilogRes.append(v)
-            inputs.append(output)
-        
-        inputStr = ','.join(inputs)
-        
-        if len(branchStr) > 1:
-            outputStr = 'output%d_branch%s'%(treeNum,branchStr)
-        else:
-            outputStr = 'output%d'%treeNum
-            
-        verilogRes.append('\t%s #50 (%s,%s);'%(self.gate,outputStr,inputStr))
-        return ('\n'.join(verilogRes),outputStr)
-
 class InputNode(Node):
 
     def randomizeGate(self):
         self.inputIndex = random.randint(0, self.numOrganismInputs - 1)
         self.numberOfInputs = 0
         self.gate = "input" + str(self.inputIndex)
-    
-    def toVerilog(self,treeNum,branchStr):
-        """
-        Each node needs to know the branch number of its children's
-        outputs and the tree number (or id).
         
-        Each node needs to know its branch number in the tree and
-        the tree number (or id).
-        
-        Outputs: verilog,outputStr
-        """
-        
-        return ('\t// input comment','input%d'%self.inputIndex)
-    
-    #def toVerilog(self,levelName):
-    #    
-    #    return '%s%d_%s'%(levelName,self.depth,self.gate)
 
 if __name__ == '__main__':
     tree = Tree(4, 3, .9)
     print "tree1"
     print tree
-    print "------------------"
+    print tree.toList()
     tree2 = Tree(4,3,1)
     print "tree2"
     print tree2
-    print "------------------"
 ##    print tree2.toList()
     #tree.root.replaceChild(tree.root.children[0], tree2.root)
     newtree = tree.crossover(tree2)
     print "\nnew tree"
     print newtree
-    print "------------------"
     for i in range(10):
         newtree = newtree.crossover(tree)
         print i
@@ -202,8 +148,5 @@ if __name__ == '__main__':
 ##    print tree
 ##    print "tree2"
 ##    print tree2
-        
     tree.root.replaceSelf(tree2.root)
-
     print tree
-    print tree.toVerilog()
