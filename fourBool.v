@@ -1,4 +1,4 @@
-module fourBool(output0,output1,output2,output3,input0,input1,input2,input3);
+module f(output0,output1,output2,output3,input0,input1,input2,input3);
 
 	output output0,output1,output2,output3;
 	input input0,input1,input2,input3;
@@ -41,6 +41,5 @@ module fourBool(output0,output1,output2,output3,input0,input1,input2,input3);
 	nand #50 (output3_branch011,output3_branch0110,output3_branch0111);
 	xor #50 (output3_branch01,output3_branch010,output3_branch011);
 	or #50 (output3,output3_branch00,output3_branch01);
-
 
 endmodule
