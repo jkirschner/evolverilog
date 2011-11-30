@@ -7,15 +7,14 @@
     Description :
 """
 
-from Organism import *
 import random
 import selector
 import matplotlib.pyplot as pyplot
 
 class OrganismManager:
-    def __init__(self, population, survival, threshold, resultMap,
-        mutationRate = 0.1, verilogWriteFileName = 'fourBool.v',
-        verilogModuleName = 'fourBool', nLayers = 1):
+    def __init__(self, organismType, population, survival, threshold, 
+        resultMap, verilogWriteFileName = 'organism.v', 
+        verilogModuleName = None, **kwargs):
         """
             organisms  : <List> of <Organism>s
             population : the maximum number of <Organism>s
@@ -29,6 +28,8 @@ class OrganismManager:
         assert (population > survival), "population should be greater than " \
                                          "survival."
         
+        self.organismType = organismType
+        
         self.organisms = []
         self.population = population
         self.survival = survival
@@ -41,9 +42,13 @@ class OrganismManager:
         self._selectorPmf = None
         
         self.verilogWriteFileName = verilogWriteFileName
+        
+        if verilogModuleName is None:
+            verilogModuleName = verilogWriteFileName.split('.')[0]
+            
         self.verilogModuleName = verilogModuleName
         
-        self.nLayers = nLayers
+        self.kwargs = kwargs
 
     def __str__(self):
         s = "Population : %i \n" % (self.population)
@@ -112,14 +117,16 @@ class OrganismManager:
         
         for i in range(self.population):
             # CHANGE THIS LINE
-            randOrganism = BooleanLogicOrganism(
+            randOrganism = self.organismType(
+
                 self.verilogWriteFileName,
                 self.getNumberOfInputs(),
                 self.getNumberOfOutputs(),
                 randomInit=True,
                 moduleName=self.verilogModuleName,
-                nLayers = self.nLayers
+                **self.kwargs
             )
+            
             randOrganism.evaluate(self._resultMap)
             self.organisms.append(randOrganism)
         self.organisms.sort(reverse = True)
@@ -143,15 +150,19 @@ class OrganismManager:
         
 if __name__ == '__main__':
     import matplotlib.pyplot as pyplot
+    import testOrgs
+    from BooleanLogic import BooleanLogicOrganism
+    from TreeOrganism import TreeOrganism
     
     defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4,'fourBool',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
     
     pyplot.ion()
-    manager = OrganismManager(10,2,16,simMap,
-        verilogWriteFileName = 'fourBool.v',
-        verilogModuleName = 'fourBool',
-        nLayers = 1)
+    #manager = OrganismManager(BooleanLogicOrganism,
+    #    10,2,16,simMap,verilogWriteFileName = 'fourBool.v',nLayers = 1)
+    manager = OrganismManager(TreeOrganism,
+        10,2,16,simMap,verilogWriteFileName = 'fourBool.v',
+        maxDepth=3,inputProbability=.2)
         
     manager.execute(True)
     pyplot.show()

@@ -71,6 +71,7 @@ def getSimulationResultFromText(txt):
     # will go through lines 1:END (Note: last element is EOF)
     for line in lines[1:-1]:
         simResults = line.strip(' ').split(',') # csv format
+        
         s.addTrial(
             SimulationTrial(
                 tuple(int(a) for a in simResults[0:numberOfOutputs]),
