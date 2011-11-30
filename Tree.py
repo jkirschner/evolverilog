@@ -20,6 +20,9 @@ class Tree:
         return self.root.count()
 
     def crossover(self, other):
+        """
+            Return Type: <Tree>
+        """
         child = deepcopy(self)
         nodeList = child.toList()
         otherNodeList = other.toList()
@@ -35,7 +38,36 @@ class Tree:
         childNode.replaceSelf(otherNode)
         return child
 
+    def mutate(self):
+        """
+            Return Type: <Tree>
+            Selects one of the <Node>s in a <Tree>, and replaces it with
+            a new random <Node>.
+        """
+        mutant = deepcopy(self)
+        nodeList = mutant.toList()
+        mutantNodeIndex = random.randint(0,len(nodeList)-1)
+        mutantNode = nodeList[mutantNodeIndex]
+
+        # Create a new random <Node>.
+        if (mutantNode.depth == mutantNode.maxDepth):
+            newNode = InputNode(mutantNode.parent, mutantNode.numOrganismInputs,
+                                mutantNode.depth,  mutantNode.maxDepth,
+                                mutantNode.inputProbability)
+        else:
+            newNode = Node(mutantNode.parent, mutantNode.numOrganismInputs,
+                           mutantNode.depth,  mutantNode.maxDepth,
+                           mutantNode.inputProbability)
+
+        # Replace the chosen <Node> with the new <Node>
+        mutantNode.replaceSelf(newNode)
+        
+        return mutant
+    
     def toList(self):
+        """
+            Return Type: <List> of <Node>s (of the self <Tree>)
+        """
         return self.root.toList()
     
     def toVerilog(self,treeNum):
@@ -60,6 +92,8 @@ class Node:
         self.depth = depth
         self.randomizeGate()
         self.inputProbability = inputProbability
+        self.maxDepth = maxDepth
+        self.isInputNode = False
         self.makeChildren(maxDepth)
 
     def __str__(self):
@@ -153,7 +187,10 @@ class Node:
         return ('\n'.join(verilogRes),outputStr)
 
 class InputNode(Node):
-
+    def __init__(self, parent, numOrganismInputs, depth, maxDepth, inputProbability):
+        Node.__init__(self, parent, numOrganismInputs, depth, maxDepth, inputProbability)
+        self.isInputNode = True
+        
     def randomizeGate(self):
         self.inputIndex = random.randint(0, self.numOrganismInputs - 1)
         self.numberOfInputs = 0
@@ -177,7 +214,7 @@ if __name__ == '__main__':
     print "tree1"
     print tree
     print tree.toList()
-    tree2 = Tree(4,3,1)
+    tree2 = Tree(4,3,0.2)
     print "tree2"
     print tree2
 ##    print tree2.toList()
@@ -185,6 +222,9 @@ if __name__ == '__main__':
     newtree = tree.crossover(tree2)
     print "\nnew tree"
     print newtree
+    print "\nmutated from new tree"
+    print newtree.mutate()
+    
     for i in range(10):
         newtree = newtree.crossover(tree)
         print i
@@ -199,3 +239,4 @@ if __name__ == '__main__':
     tree.root.replaceSelf(tree2.root)
     print tree,'\n'
     print tree.toVerilog(0)
+    

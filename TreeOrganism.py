@@ -15,6 +15,7 @@ from Tree import *
 class TreeOrganism(Organism):
 
     treeCrossOverProbability = .7
+    treeMutateProbability = .1
 
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
         randomInit=False, maxDepth=3, inputProbability = .2, moduleName='organism'):
@@ -74,11 +75,13 @@ class TreeOrganism(Organism):
 
     def mutate(self):
         """
-            Mutates stuff
             Return Type: <TreeOrganism>
+            Mutates stuff
         """
-        # Needs to be implemented #
-        print "TreeOrganism->mutate needs to be implemented."
+        
+        for i in range(len(self.trees)):
+            if (random.random() < TreeOrganism.treeMutateProbability):
+                self.trees[i] = self.trees[i].mutate()
         return
     
     def toVerilog(self, filepath, moduleName):
