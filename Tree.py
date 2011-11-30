@@ -28,7 +28,7 @@ class Tree:
         childNodeIndex = random.randint(0,len(nodeList)-1)
         childNode = nodeList[childNodeIndex]
         otherNodeIndex = random.randint(0, len(otherNodeList)-1)
-        otherNode = otherNodeList[otherNodeIndex]
+        otherNode = deepcopy(otherNodeList[otherNodeIndex])
         print "child node index: " + str(childNodeIndex)
         print "other node index: " + str(otherNodeIndex)
         #childNode = random.choice(nodeList)
