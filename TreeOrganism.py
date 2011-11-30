@@ -25,6 +25,7 @@ class TreeOrganism(Organism.AbstractOrganism):
         self.inputProbability = inputProbability
         self.trees = []        
         
+        print moduleName,'here'
         Organism.AbstractOrganism.__init__(self, verilogFilePath, 
             numInputs, numOutputs, randomInit=randomInit, 
             moduleName=moduleName)
@@ -49,9 +50,9 @@ class TreeOrganism(Organism.AbstractOrganism):
             Crossovers self with another <TreeOrganism>, and returns a new
             <TreeOrganism>.
         """
-        result = TreeOrganism(self.verilogFilePath, self.numInputs,#change verilogFilePath??
-                              self.numOutputs, False, self.maxDepth,
-                              self.inputProbability, self.moduleName)
+        result = TreeOrganism(self.verilogFilePath, self.numInputs,
+            self.numOutputs, randomInit=False, maxDepth=self.maxDepth,
+            inputProbability=self.inputProbability, moduleName=self.moduleName)
         for i in range(self.numOutputs):
             selfTree = self.trees[i]
             otherTree = otherParent.trees[i]
@@ -105,14 +106,13 @@ class TreeOrganism(Organism.AbstractOrganism):
             Return Type: float
         """
         # Needs to be implemented #
-        print "TreeOrganism->fitnessFunction needs to be implemented."
+        
         score = 0.0
         
-        for i in xrange(len(self.trees)):
+        for i in xrange(self.numOutputs):
             if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
                 score += 1.0
         return (score)**2 + 0.1
-    
         
     def getTrees(self):
         return self.trees
@@ -142,5 +142,5 @@ if __name__ == '__main__':
     print "--------------------------------------"
     print "--------------------------------------"
     print tree1
-    tree1.toVerilog('delme.v','delme')
-    print 'toVerilog() method test successful (no errors)'
+    #tree1.toVerilog('delme.v','delme')
+    #print 'toVerilog() method test successful (no errors)'
