@@ -13,8 +13,8 @@ import matplotlib.pyplot as pyplot
 
 class OrganismManager:
     def __init__(self, organismType, population, survival, threshold, 
-        resultMap, verilogWriteFileName = 'fourBool.v',
-        verilogModuleName = 'fourBool', **kwargs):
+        resultMap, verilogWriteFileName = 'organism.v', 
+        verilogModuleName = None, **kwargs):
         """
             organisms  : <List> of <Organism>s
             population : the maximum number of <Organism>s
@@ -42,6 +42,9 @@ class OrganismManager:
         self._selectorPmf = None
         
         self.verilogWriteFileName = verilogWriteFileName
+        
+        if verilogModuleName is None:
+            verilogModuleName = verilogWriteFileName.strip('.')[0]
         self.verilogModuleName = verilogModuleName
         
         self.kwargs = kwargs
