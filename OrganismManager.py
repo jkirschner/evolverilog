@@ -85,7 +85,7 @@ class OrganismManager:
     def updateOrganisms(self,visualize=False):
         """
             Return Type: void
-            1. Keep the certain number of the best <Organism>s from the
+            1. Keep the (self.survival) best <Organism>s from the
                previous generation
             2. Selects two <Organism>s from the list, crossover them and add
                a new <Organism>
@@ -116,24 +116,28 @@ class OrganismManager:
         """
         
         for i in range(self.population):
-            # CHANGE THIS LINE
-            randOrganism = self.organismType(
-
-                self.verilogWriteFileName,
-                self.getNumberOfInputs(),
-                self.getNumberOfOutputs(),
-                randomInit=True,
-                moduleName=self.verilogModuleName,
-                **self.kwargs
-            )
-            
-            randOrganism.evaluate(self._resultMap)
+            randOrganism = self.getRandomOrganism()
             self.organisms.append(randOrganism)
         self.organisms.sort(reverse = True)
         self._updateSelectorPmf()
         
         if visualize:
             self.visualize()
+
+
+    def getRandomOrganism(self):
+        randOrganism = self.organismType(
+            self.verilogWriteFileName,
+            self.getNumberOfInputs(),
+            self.getNumberOfOutputs(),
+            randomInit=True,
+            moduleName=self.verilogModuleName,
+            **self.kwargs
+            )
+        
+        randOrganism.evaluate(self._resultMap)
+        return randOrganism
+
 
     def execute(self,visualize=False):
         """
