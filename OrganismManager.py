@@ -44,7 +44,8 @@ class OrganismManager:
         self.verilogWriteFileName = verilogWriteFileName
         
         if verilogModuleName is None:
-            verilogModuleName = verilogWriteFileName.strip('.')[0]
+            verilogModuleName = verilogWriteFileName.split('.')[0]
+            
         self.verilogModuleName = verilogModuleName
         
         self.kwargs = kwargs
@@ -84,7 +85,7 @@ class OrganismManager:
     def updateOrganisms(self,visualize=False):
         """
             Return Type: void
-            1. Keep the certain number of the best <Organism>s from the
+            1. Keep the (self.survival) best <Organism>s from the
                previous generation
             2. Selects two <Organism>s from the list, crossover them and add
                a new <Organism>
@@ -115,22 +116,28 @@ class OrganismManager:
         """
         
         for i in range(self.population):
-            # CHANGE THIS LINE
-            randOrganism = self.organismType(
-                self.verilogWriteFileName,
-                self.getNumberOfInputs(),
-                self.getNumberOfOutputs(),
-                randomInit=True,
-                moduleName=self.verilogModuleName,
-                **self.kwargs
-            )
-            randOrganism.evaluate(self._resultMap)
+            randOrganism = self.getRandomOrganism()
             self.organisms.append(randOrganism)
         self.organisms.sort(reverse = True)
         self._updateSelectorPmf()
         
         if visualize:
             self.visualize()
+
+
+    def getRandomOrganism(self):
+        randOrganism = self.organismType(
+            self.verilogWriteFileName,
+            self.getNumberOfInputs(),
+            self.getNumberOfOutputs(),
+            randomInit=True,
+            moduleName=self.verilogModuleName,
+            **self.kwargs
+            )
+        
+        randOrganism.evaluate(self._resultMap)
+        return randOrganism
+
 
     def execute(self,visualize=False):
         """
@@ -149,13 +156,17 @@ if __name__ == '__main__':
     import matplotlib.pyplot as pyplot
     import testOrgs
     from BooleanLogic import BooleanLogicOrganism
+    from TreeOrganism import TreeOrganism
     
     defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4,'fourBool',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
     
     pyplot.ion()
-    manager = OrganismManager(BooleanLogicOrganism,
-        10,2,16,simMap,verilogWriteFileName = 'fourBool.v',nLayers = 1)
+    #manager = OrganismManager(BooleanLogicOrganism,
+    #    10,2,16,simMap,verilogWriteFileName = 'fourBool.v',nLayers = 1)
+    manager = OrganismManager(TreeOrganism,
+        10,2,16,simMap,verilogWriteFileName = 'fourBool.v',
+        maxDepth=3,inputProbability=.2)
         
     manager.execute(True)
     pyplot.show()

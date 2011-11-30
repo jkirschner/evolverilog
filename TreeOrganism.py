@@ -15,10 +15,10 @@ import Tree
 class TreeOrganism(Organism.AbstractOrganism):
 
     treeCrossOverProbability = .7
+    treeMutateProbability = .1
 
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, moduleName='organism', 
-        maxDepth=3, inputProbability = .2):
+        randomInit=False, maxDepth=10, inputProbability = .2, moduleName='organism'):
         # inputProbability should be reconsidered, and not just passed in
         # We should develop a way to decide what this value should be
 
@@ -26,6 +26,7 @@ class TreeOrganism(Organism.AbstractOrganism):
         self.inputProbability = inputProbability
         self.trees = []        
         
+        print moduleName,'here'
         Organism.AbstractOrganism.__init__(self, verilogFilePath, 
             numInputs, numOutputs, randomInit=randomInit, 
             moduleName=moduleName)
@@ -50,9 +51,9 @@ class TreeOrganism(Organism.AbstractOrganism):
             Crossovers self with another <TreeOrganism>, and returns a new
             <TreeOrganism>.
         """
-        result = TreeOrganism(self.verilogFilePath, self.numInputs,#change verilogFilePath??
-                              self.numOutputs, False, self.maxDepth,
-                              self.inputProbability, self.moduleName)
+        result = TreeOrganism(self.verilogFilePath, self.numInputs,
+            self.numOutputs, randomInit=False, maxDepth=self.maxDepth,
+            inputProbability=self.inputProbability, moduleName=self.moduleName)
         for i in range(self.numOutputs):
             selfTree = self.trees[i]
             otherTree = otherParent.trees[i]
@@ -73,20 +74,19 @@ class TreeOrganism(Organism.AbstractOrganism):
 
     def mutate(self):
         """
-            Mutates stuff
             Return Type: <TreeOrganism>
+            Mutates stuff
         """
-        # Needs to be implemented #
-        print "TreeOrganism->mutate needs to be implemented."
+        
+        for i in range(len(self.trees)):
+            if (random.random() < TreeOrganism.treeMutateProbability):
+                self.trees[i] = self.trees[i].mutate()
         return
     
     def toVerilog(self, filepath, moduleName):
         """
             Writes Organism to a verilog file.
-        """
-        # Needs to be implemented #
-        # print "TreeOrganism->toVerilog needs to be implemented."
-        
+        """        
         moduleInputs = ['input%d'%i for i in xrange(self.numInputs)]
         moduleInputsTxt = ','.join(moduleInputs)
         moduleOutputsTxt = ','.join('output%d'%i for i in xrange(self.numOutputs))
@@ -109,9 +109,13 @@ class TreeOrganism(Organism.AbstractOrganism):
             Return Type: float
         """
         # Needs to be implemented #
-        print "TreeOrganism->fitnessFunction needs to be implemented."
+        
         score = 0.0
-        return score
+        
+        for i in xrange(self.numOutputs):
+            if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
+                score += 1.0
+        return (score)**2 + 0.1
         
     def getTrees(self):
         return self.trees
@@ -141,5 +145,5 @@ if __name__ == '__main__':
     print "--------------------------------------"
     print "--------------------------------------"
     print tree1
-    tree1.toVerilog('delme.v','delme')
-    print 'toVerilog() method test successful (no errors)'
+    #tree1.toVerilog('delme.v','delme')
+    #print 'toVerilog() method test successful (no errors)'

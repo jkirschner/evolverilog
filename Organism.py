@@ -26,7 +26,7 @@ class AbstractOrganism:
         self.fitness = None
         
         if moduleName is None:
-            moduleName = verilogFilePath.strip('.')[0]
+            moduleName = verilogFilePath.split('.')[0]
         self.moduleName = moduleName
         
         if randomInit:
