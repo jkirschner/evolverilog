@@ -9,29 +9,26 @@
 
 import random
 import testOrgs
-from Organism import *
-from Tree import *
+import Organism
+import Tree
 
-class TreeOrganism(Organism):
+class TreeOrganism(Organism.AbstractOrganism):
 
     treeCrossOverProbability = .7
 
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, maxDepth=3, inputProbability = .2, moduleName='organism'):
+        randomInit=False, moduleName='organism', 
+        maxDepth=3, inputProbability = .2):
         # inputProbability should be reconsidered, and not just passed in
         # We should develop a way to decide what this value should be
 
-        self.verilogFilePath = verilogFilePath
-        self.numInputs = numInputs
-        self.numOutputs = numOutputs
-        self.moduleName = moduleName
-        self.fitness = None
         self.maxDepth = maxDepth
         self.inputProbability = inputProbability
         self.trees = []        
         
-        if randomInit:
-            self.randomInitialize()
+        Organism.AbstractOrganism.__init__(self, verilogFilePath, 
+            numInputs, numOutputs, randomInit=randomInit, 
+            moduleName=moduleName)
             
     def __str__(self):
         contents = '\n-\n'.join(str(tree) for tree in self.trees)
@@ -42,8 +39,10 @@ class TreeOrganism(Organism):
             Return Type: void
         """
         for i in range(self.numOutputs):
-            self.trees.append(Tree(self.numInputs, self.maxDepth,
-                                   self.inputProbability))
+            self.trees.append(
+                Tree.Tree(
+                    self.numInputs, self.maxDepth,self.inputProbability)
+                )
     
     def crossover(self, otherParent):
         """
@@ -102,7 +101,7 @@ class TreeOrganism(Organism):
         body = '\n'.join(layerTxts)
         
         fin = open(filepath,'w')
-        fin.write(verilogFromTemplate(moduleName,moduleArgsTxt,body))
+        fin.write(Organism.verilogFromTemplate(moduleName,moduleArgsTxt,body))
         fin.close()
 
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
@@ -142,5 +141,5 @@ if __name__ == '__main__':
     print "--------------------------------------"
     print "--------------------------------------"
     print tree1
-    print tree1.toVerilog('delme.v','delme')
-    
+    tree1.toVerilog('delme.v','delme')
+    print 'toVerilog() method test successful (no errors)'
