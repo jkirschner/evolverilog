@@ -26,7 +26,7 @@ class Tree:
         childNodeIndex = random.randint(0,len(nodeList)-1)
         childNode = nodeList[childNodeIndex]
         otherNodeIndex = random.randint(0, len(otherNodeList)-1)
-        otherNode = otherNodeList[otherNodeIndex]
+        otherNode = deepcopy(otherNodeList[otherNodeIndex])
         print "child node index: " + str(childNodeIndex)
         print "other node index: " + str(otherNodeIndex)
         #childNode = random.choice(nodeList)
@@ -37,6 +37,9 @@ class Tree:
 
     def toList(self):
         return self.root.toList()
+    
+    def toVerilog(self,treeNum):
+        return self.root.toVerilog(treeNum,'0')[0]
         
 class Node:
     # Could include gate probabilities or weights so that buf is less likely
@@ -110,11 +113,44 @@ class Node:
         # more depth , means more likely to terminate the tree
         for i in range(self.numberOfInputs):
             if (self.depth < maxDepth and random.random() > self.inputProbability):
-                self.children.append(Node(self, self.numOrganismInputs,
-                                          self.depth + 1, maxDepth, self.inputProbability))
+                self.children.append(
+                    Node(self, self.numOrganismInputs,
+                        self.depth + 1, maxDepth, self.inputProbability)
+                    )
             else:
-                self.children.append(InputNode(self, self.numOrganismInputs,
-                                          self.depth + 1, maxDepth, self.inputProbability))
+                self.children.append(
+                    InputNode(self, self.numOrganismInputs,
+                        self.depth + 1, maxDepth, self.inputProbability)
+                    )
+    
+    def toVerilog(self,treeNum,branchStr):
+        """
+        Each node needs to know the branch number of its children's
+        outputs and the tree number (or id).
+        
+        Each node needs to know its branch number in the tree and
+        the tree number (or id).
+        
+        Outputs: verilog,outputStr
+        """
+        
+        verilogRes = []
+        inputs = []
+        for childNum, child in enumerate(self.children):
+            v,output = child.toVerilog(treeNum,'%s%d'%(branchStr,childNum))
+            if v != '':
+                verilogRes.append(v)
+            inputs.append(output)
+        
+        inputStr = ','.join(inputs)
+        
+        if len(branchStr) > 1:
+            outputStr = 'output%d_branch%s'%(treeNum,branchStr)
+        else:
+            outputStr = 'output%d'%treeNum
+            
+        verilogRes.append('\t%s #50 (%s,%s);'%(self.gate,outputStr,inputStr))
+        return ('\n'.join(verilogRes),outputStr)
 
 class InputNode(Node):
 
@@ -123,6 +159,18 @@ class InputNode(Node):
         self.numberOfInputs = 0
         self.gate = "input" + str(self.inputIndex)
         
+    def toVerilog(self,treeNum,branchStr):
+        """
+        Each node needs to know the branch number of its children's
+        outputs and the tree number (or id).
+        
+        Each node needs to know its branch number in the tree and
+        the tree number (or id).
+        
+        Outputs: verilog,outputStr
+        """
+        
+        return ('','input%d'%self.inputIndex)
 
 if __name__ == '__main__':
     tree = Tree(4, 3, .9)
@@ -137,10 +185,10 @@ if __name__ == '__main__':
     newtree = tree.crossover(tree2)
     print "\nnew tree"
     print newtree
-##    for i in range(10):
-##        newtree = newtree.crossover(tree)
-##        print i
-##        print newtree
+    for i in range(10):
+        newtree = newtree.crossover(tree)
+        print i
+        print newtree
 ##    newtree2 = tree2.crossover(tree)
 ##    print "new tree2"
 ##    print newtree2
@@ -149,4 +197,5 @@ if __name__ == '__main__':
 ##    print "tree2"
 ##    print tree2
     tree.root.replaceSelf(tree2.root)
-    print tree
+    print tree,'\n'
+    print tree.toVerilog(0)
