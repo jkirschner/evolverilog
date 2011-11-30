@@ -7,7 +7,7 @@
     Description :
 """
 
-from Organism import *
+from TreeOrganism import *
 import random
 import selector
 import matplotlib.pyplot as pyplot
@@ -112,13 +112,21 @@ class OrganismManager:
         
         for i in range(self.population):
             # CHANGE THIS LINE
-            randOrganism = BooleanLogicOrganism(
+##            randOrganism = BooleanLogicOrganism(
+##                self.verilogWriteFileName,
+##                self.getNumberOfInputs(),
+##                self.getNumberOfOutputs(),
+##                randomInit=True,
+##                moduleName=self.verilogModuleName,
+##                nLayers = self.nLayers
+##            )
+            randOrganism = TreeOrganism(
                 self.verilogWriteFileName,
                 self.getNumberOfInputs(),
                 self.getNumberOfOutputs(),
                 randomInit=True,
                 moduleName=self.verilogModuleName,
-                nLayers = self.nLayers
+                maxDepth=3
             )
             randOrganism.evaluate(self._resultMap)
             self.organisms.append(randOrganism)

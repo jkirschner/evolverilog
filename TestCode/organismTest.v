@@ -4,22 +4,22 @@
 module organismSimulator;
 
     reg Input0,Input1,Input2,Input3; // number of Inputs Args
-    wire Output0,Output1; // number of Outputs Args
+    wire Output0,Output1,Output2,Output3; // number of Outputs Args
     
     parameter settleDelay = 10000;
     
-    fourBool uut (Output0,Output1,Input0,Input1,Input2,Input3); // module to call, number of Output, Input Args
+    fourBool uut (Output0,Output1,Output2,Output3,Input0,Input1,Input2,Input3); // module to call, number of Output, Input Args
     
     integer i;
     
     initial
     begin
-        $display ("out,out,in,in,in,in"); // io structure
+        $display ("out,out,out,out,in,in,in,in"); // io structure
         // should run number of inputs ^ 2 times
         for (i = 0; i < 16; i = i + 1) begin
             {Input0,Input1,Input2,Input3} = i; // number of Input Args
             #settleDelay
-            $display ("%d,%d,%d,%d,%d,%d",Output0,Output1,Input0,Input1,Input2,Input3); // total args, outputs, inputs 
+            $display ("%d,%d,%d,%d,%d,%d,%d,%d",Output0,Output1,Output2,Output3,Input0,Input1,Input2,Input3); // total args, outputs, inputs 
         end
     end
     

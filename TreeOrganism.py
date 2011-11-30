@@ -17,7 +17,7 @@ class TreeOrganism(Organism):
     treeCrossOverProbability = .7
 
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, maxDepth=3, inputProbability = .2, moduleName='organism'):
+        randomInit=False, maxDepth=10, inputProbability = .2, moduleName='organism'):
         # inputProbability should be reconsidered, and not just passed in
         # We should develop a way to decide what this value should be
 
@@ -84,10 +84,7 @@ class TreeOrganism(Organism):
     def toVerilog(self, filepath, moduleName):
         """
             Writes Organism to a verilog file.
-        """
-        # Needs to be implemented #
-        # print "TreeOrganism->toVerilog needs to be implemented."
-        
+        """        
         moduleInputs = ['input%d'%i for i in xrange(self.numInputs)]
         moduleInputsTxt = ','.join(moduleInputs)
         moduleOutputsTxt = ','.join('output%d'%i for i in xrange(self.numOutputs))
@@ -112,7 +109,12 @@ class TreeOrganism(Organism):
         # Needs to be implemented #
         print "TreeOrganism->fitnessFunction needs to be implemented."
         score = 0.0
-        return score
+        
+        for i in xrange(len(self.trees)):
+            if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
+                score += 1.0
+        return (score)**2 + 0.1
+    
         
     def getTrees(self):
         return self.trees
