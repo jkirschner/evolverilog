@@ -11,20 +11,21 @@ module scootBot(mUp, mRight, mDown, mLeft, lUp, lRight, lDown, lLeft, clock);
 	input lUp, lRight, lDown, lLeft;
 	wire pUp, pRight, pDown, pLeft;
 
-	dFlipFlop (pUp, lUp, clock);
-	dFlipFlop (pRight, lRight, clock);
-	dFlipFlop (pDown, lDown, clock);
-	dFlipFlop (pLeft, lLeft, clock);
+	dFlipFlop #100 (pUp, lUp, clock);
+	dFlipFlop #100 (pRight, lRight, clock);
+	dFlipFlop #100 (pDown, lDown, clock);
+	dFlipFlop #100 (pLeft, lLeft, clock);
 
-	or (mUp, lUp, pUp);
-	or (mRight, lRight, pRight);
-	or (mDown, lDown, pDown);
-	or (mLeft, lLeft, pLeft);
+	or #50 (mUp, lUp, pUp);
+	or #50 (mRight, lRight, pRight);
+	or #50 (mDown, lDown, pDown);
+	or #50 (mLeft, lLeft, pLeft);
 endmodule
 
 module scootBotSimulator;
 	localparam WIDTH = 10;
 	localparam HEIGHT = 10;
+	localparam NUM_STEPS = 100;
 	localparam x = WIDTH/2;
 	localparam y = HEIGHT/2;
 
@@ -37,17 +38,19 @@ module scootBotSimulator;
 	end
 
 	wire mUp, mRight, mDown, mLeft;
+	reg clock;
 
 	initial
 	begin
-		for (i = 0; i < numTests; i = i + 1)
-		begin
-			if a[x][y]==1:
-				print "Picked one up!";
-				a[x][y]=0;
-			scootBot #200 sb (mUp, MRight, mDown, mLeft, a[x][(y+1)%HEIGHT], a[(x+1)%WIDTH][y], a[x][(y-1)%HEIGHT], a[(x-1)%WIDTH][y], clock);
-			x = x+mRight-mLeft;
-			y = y+mUp-mDown;
+		repeat(NUM_STEPS) begin
+			$display("x: %d\ty: %d", x, y);
+			if (a[x][y] == 1'b1) begin
+				$display("Picked one up!");
+				a[x][y]=1'b0;
+			end
+			scootBot #2000 (mUp, MRight, mDown, mLeft, a[x][(y+1)%HEIGHT], a[(x+1)%WIDTH][y], a[x][(y-1)%HEIGHT], a[(x-1)%WIDTH][y], clock);
+			x = (x+mRight-mLeft)%WIDTH
+			y = (y+mUp-mDown)%HEIGHT
 		end
 	end
 
