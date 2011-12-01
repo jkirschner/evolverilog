@@ -58,7 +58,7 @@ class AbstractOrganism:
         
         Return type: <float> or <int> (number)
         """
-        if True:#self.fitness is None:
+        if self.fitness is None:
             self.toVerilog(self.verilogFilePath, self.moduleName)
             #change the arguments on the line below or it will not toVerilog
             simRes = testOrgs.testOrganism(

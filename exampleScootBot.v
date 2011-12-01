@@ -48,9 +48,9 @@ module scootBotSimulator;
 				$display("Picked one up!");
 				a[x][y]=1'b0;
 			end
-			scootBot #2000 (mUp, MRight, mDown, mLeft, a[x][(y+1)%HEIGHT], a[(x+1)%WIDTH][y], a[x][(y-1)%HEIGHT], a[(x-1)%WIDTH][y], clock);
-			x = (x+mRight-mLeft)%WIDTH
-			y = (y+mUp-mDown)%HEIGHT
+			scootBot #2000 sb (mUp, MRight, mDown, mLeft, a[x][(y+1)%HEIGHT], a[(x+1)%WIDTH][y], a[x][(y-1)%HEIGHT], a[(x-1)%WIDTH][y], clock);
+			x = (x+mRight-mLeft)%WIDTH;
+			y = (y+mUp-mDown)%HEIGHT;
 		end
 	end
 
