@@ -165,7 +165,7 @@ if __name__ == '__main__':
     #manager = OrganismManager(BooleanLogicOrganism,
     #    10,2,16,simMap,verilogWriteFileName = 'fourBool.v',nLayers = 1)
     manager = OrganismManager(TreeOrganism,
-        10,2,16,simMap,verilogWriteFileName = 'fourBool.v',
+        100,10,16,simMap,verilogWriteFileName = 'fourBool.v',
         maxDepth=3,inputProbability=.2)
         
     manager.execute(True)
