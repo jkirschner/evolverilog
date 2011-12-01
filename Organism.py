@@ -66,7 +66,9 @@ class AbstractOrganism:
                 'TestCode',
                 self.numInputs,
                 self.numOutputs,
-                self.moduleName)
+                self.moduleName,
+                writeSim=False,
+                clearFiles=False)
             
             inputs = []
             actualOutputs = []

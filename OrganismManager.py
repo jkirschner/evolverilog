@@ -7,9 +7,11 @@
     Description :
 """
 
+import testOrgs
 import random
 import selector
 import matplotlib.pyplot as pyplot
+import os
 
 class OrganismManager:
     def __init__(self, organismType, population, survival, threshold, 
@@ -144,12 +146,31 @@ class OrganismManager:
             Return Type: void
             MainLoop
         """
+        self.writeSimulation()
         self.populate(visualize)
         while self.organisms[0].getFitness() < self.threshold:
             self.generationNumber += 1
             self.updateOrganisms(visualize)
         self.organisms[0].toVerilog('Winner.v', self.verilogModuleName)
-            
+        self.deleteSimulation()
+    
+    def writeSimulation(self):
+        testOrgs.writeSimulation(
+            os.path.join('TestCode','%s.v'%'organismTest'),
+            self.verilogWriteFileName,
+            self._numberOfInputs,
+            self._numberOfOutputs,
+            self.verilogModuleName
+        )
+        
+    def deleteSimulation(self):
+        try:
+            os.remove(os.path.join('TestCode','%s.v'%'organismTest'))
+            os.remove(os.path.join('TestCode','%s.v'%'organismTest'))
+        except:
+            print "Error clearing files!"
+            print "Files are to be cleared, but the files probably don't exist."
+    
     def visualize(self):
         selector.drawOrganismPmfAsCdf(
             self._selectorPmf, self.generationNumber
