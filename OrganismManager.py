@@ -28,6 +28,8 @@ class OrganismManager:
         assert (population > survival), "population should be greater than " \
                                          "survival."
         
+        self.generationNumber = 0
+        
         self.organismType = organismType
         
         self.organisms = []
@@ -124,7 +126,6 @@ class OrganismManager:
         if visualize:
             self.visualize()
 
-
     def getRandomOrganism(self):
         randOrganism = self.organismType(
             self.verilogWriteFileName,
@@ -138,7 +139,6 @@ class OrganismManager:
         randOrganism.evaluate(self._resultMap)
         return randOrganism
 
-
     def execute(self,visualize=False):
         """
             Return Type: void
@@ -146,11 +146,14 @@ class OrganismManager:
         """
         self.populate(visualize)
         while self.organisms[0].getFitness() < self.threshold:
+            self.generationNumber += 1
             self.updateOrganisms(visualize)
         self.organisms[0].toVerilog('Winner.v', self.verilogModuleName)
             
     def visualize(self):
-        selector.drawOrganismPmfAsCdf(self._selectorPmf)
+        selector.drawOrganismPmfAsCdf(
+            self._selectorPmf, self.generationNumber
+        )
         
 if __name__ == '__main__':
     import matplotlib.pyplot as pyplot
@@ -165,7 +168,7 @@ if __name__ == '__main__':
     #manager = OrganismManager(BooleanLogicOrganism,
     #    10,2,16,simMap,verilogWriteFileName = 'fourBool.v',nLayers = 1)
     manager = OrganismManager(TreeOrganism,
-        100,10,16,simMap,verilogWriteFileName = 'fourBool.v',
+        15,3,16,simMap,verilogWriteFileName = 'fourBool.v',
         maxDepth=3,inputProbability=.2)
         
     manager.execute(True)
