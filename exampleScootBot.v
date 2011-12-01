@@ -29,20 +29,26 @@ module scootBotSimulator;
 	localparam y = HEIGHT/2;
 
 	reg [HEIGHT-1:0] a[WIDTH-1:0];
-	for row in range(WIDTH):
-		a[0] = 'b0010101001;
+	integer i;
+	
+	for (i = 0; i < WIDTH; i = i + 1)
+	begin
+		a[i] = 'b0010101001;
+	end
 
 	wire mUp, mRight, mDown, mLeft;
 
 	initial
 	begin
-		for test in numTests:
+		for (i = 0; i < numTests; i = i + 1)
+		begin
 			if a[x][y]==1:
 				print "Picked one up!";
 				a[x][y]=0;
-			scootBot #200 (mUp, MRight, mDown, mLeft, a[x][(y+1)%HEIGHT], a[(x+1)%WIDTH][y], a[x][(y-1)%HEIGHT], a[(x-1)%WIDTH][y], clock);
-			x = x+mRight-mLeft
-			y = y+mUp-mDown
+			scootBot #200 sb (mUp, MRight, mDown, mLeft, a[x][(y+1)%HEIGHT], a[(x+1)%WIDTH][y], a[x][(y-1)%HEIGHT], a[(x-1)%WIDTH][y], clock);
+			x = x+mRight-mLeft;
+			y = y+mUp-mDown;
+		end
 	end
 
 	always
