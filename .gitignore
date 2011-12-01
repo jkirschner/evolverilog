@@ -1,4 +1,6 @@
 # Compiled source #
 ###################
+fourBool.v
+Winner.v
 *.pyc
 *.orig

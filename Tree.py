@@ -30,8 +30,8 @@ class Tree:
         childNode = nodeList[childNodeIndex]
         otherNodeIndex = random.randint(0, len(otherNodeList)-1)
         otherNode = deepcopy(otherNodeList[otherNodeIndex])
-        print "child node index: " + str(childNodeIndex)
-        print "other node index: " + str(otherNodeIndex)
+        #print "child node index: " + str(childNodeIndex)
+        #print "other node index: " + str(otherNodeIndex)
         #childNode = random.choice(nodeList)
         #otherNode = deepcopy(random.choice(otherNodeList))
         # we need a deepcopy because we don't want to alter original Tree

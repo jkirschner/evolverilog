@@ -26,7 +26,7 @@ class TreeOrganism(Organism.AbstractOrganism):
         self.inputProbability = inputProbability
         self.trees = []        
         
-        print moduleName,'here'
+        #print moduleName,'here'
         Organism.AbstractOrganism.__init__(self, verilogFilePath, 
             numInputs, numOutputs, randomInit=randomInit, 
             moduleName=moduleName)
@@ -58,13 +58,13 @@ class TreeOrganism(Organism.AbstractOrganism):
             selfTree = self.trees[i]
             otherTree = otherParent.trees[i]
             if (random.random() > TreeOrganism.treeCrossOverProbability):
-                print "not crosovered"
+                #print "not crosovered"
                 if (random.random() < .5):
                     result.trees.append(selfTree)
                 else:
                     result.trees.append(otherTree)
             else:
-                print "crosovered"
+                #print "crosovered"
                 if (random.random() < .5):
                     result.trees.append(selfTree.crossover(otherTree))
                 else:
@@ -115,13 +115,15 @@ class TreeOrganism(Organism.AbstractOrganism):
         for i in xrange(self.numOutputs):
             if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
                 score += 1.0
-        return (score)**2 + 0.1
+        return (score)**2 + 0.1 - self.count()/1000.
         
     def getTrees(self):
         return self.trees
     
     def replaceTree(self, tree, index):
         self.trees[index] = tree
+    def count(self):
+        return sum(tree.count() for tree in self.trees)
         
 if __name__ == '__main__':
     
