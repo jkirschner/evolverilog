@@ -30,8 +30,12 @@ module scootBotSimulator;
 	localparam y = HEIGHT/2;
 
 	reg [HEIGHT-1:0] a[WIDTH-1:0];
-	for row in range(WIDTH):
-		a[0] = 'b0010101001;
+	integer i;
+	
+	for (i = 0; i < WIDTH; i = i + 1)
+	begin
+		a[i] = 'b0010101001;
+	end
 
 	wire mUp, mRight, mDown, mLeft;
 	reg clock;
