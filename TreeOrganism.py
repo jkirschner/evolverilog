@@ -111,11 +111,14 @@ class TreeOrganism(Organism.AbstractOrganism):
         # Needs to be implemented #
         
         score = 0.0
-        
         for i in xrange(self.numOutputs):
-            if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
-                score += 1.0
-        return (score)**2 + 0.1 - self.count()/1000.
+            #if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
+                #score += 1.0
+            score += sum( 
+                int(correctOutputs[idx][i] == a[i]) 
+                for idx,a in enumerate(actualOutputs) ) / float(len(actualOutputs))
+
+        return (score)**2 + 0.1 - self.count()/1000. #+ random.random()
         
     def getTrees(self):
         return self.trees

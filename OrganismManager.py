@@ -11,11 +11,10 @@ import testOrgs
 import random
 import selector
 import matplotlib.pyplot as pyplot
-<<<<<<< HEAD
 from copy import deepcopy
-=======
 import os
->>>>>>> b89176a6b2da1c8bcfe7f70582ec9de5297afcfd
+import cProfile
+import pstats
 
 class OrganismManager:
     def __init__(self, organismType, population, survival, mutateNum, threshold, 
@@ -89,10 +88,10 @@ class OrganismManager:
         return self._selectorPmf.Random()
 
     def generateParents(self):
-        generatorPmf = self._selectorPmf.Copy()
+        generatorPmf = self._selectorPmf
         parent1 = generatorPmf.Random()
-        generatorPmf.Remove(parent1)
-        generatorPmf.Normalize()
+        #generatorPmf.Remove(parent1)
+        #generatorPmf.Normalize()
         parent2 = generatorPmf.Random()
         return parent1,parent2
 
@@ -107,11 +106,11 @@ class OrganismManager:
             4. Sort the list by their fitness.
         """
         newGeneration = [];
-        generatorPmf = self._selectorPmf.Copy()
+        generatorPmf = self._selectorPmf
         for i in range(self.survival):
             replicatedOrganism = generatorPmf.Random()
-            generatorPmf.Remove(replicatedOrganism)
-            generatorPmf.Normalize()
+            #generatorPmf.Remove(replicatedOrganism)
+            #generatorPmf.Normalize()
             newGeneration.append(replicatedOrganism)
         
         generatorPmf = self._selectorPmf
@@ -199,7 +198,7 @@ class OrganismManager:
             self._selectorPmf, self.generationNumber
         )
         
-if __name__ == '__main__':
+def main():
     import matplotlib.pyplot as pyplot
     import testOrgs
     from BooleanLogic import BooleanLogicOrganism
@@ -217,7 +216,7 @@ if __name__ == '__main__':
     #    15,3,1,simMap,verilogWriteFileName = 'b4mux_organism.v',
     #    maxDepth=10,inputProbability=.15)
     manager = OrganismManager(TreeOrganism,
-        50,10,20,16.1 - .01,simMap,verilogWriteFileName = 'fourBool.v',
+        50,10,20, 9,simMap,verilogWriteFileName = 'fourBool.v',
         maxDepth=3,inputProbability=.2)
     #manager = OrganismManager(TreeOrganism,
     #    100,10,25,simMap,verilogWriteFileName = 'fourBitAdder_organism.v',
@@ -226,3 +225,12 @@ if __name__ == '__main__':
     manager.execute(True)
     pyplot.show()
     pyplot.ioff()
+
+def profile():
+    cProfile.run('main()', 'profileResults')
+    p = pstats.Stats('profileResults')
+    p.strip_dirs().sort_stats( 'cum').print_stats(15)
+
+if __name__ == '__main__':
+    main()
+    #profile()
