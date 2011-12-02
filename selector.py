@@ -32,7 +32,10 @@ class OrganismPmf:
         self.scalingFactor = 0
 
     def Copy(self):
-        return deepcopy(self)
+        
+        return OrganismPmf( 
+                d=dict((org,fit) for org,fit in self.d.iteritems()) 
+            )
 
     def Values(self):
         """Gets an unsorted sequence of values.
@@ -533,25 +536,30 @@ def drawOrganismPmfAsCdf(orgPmf, generationNumber):
     pyplot.draw()
 
 if __name__ == '__main__':
-    import Organism, testOrgs
-    testOrganism = Organism.BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
+    import BooleanLogic#, testOrgs
+    testOrganism = BooleanLogic.BooleanLogicOrganism('TestCode/andTest.v',2,1,randomInit=True,moduleName='andTest')
     #print testOrganism
     
-    defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
-    simMap = testOrgs.SimulationMap(defaultResult)
+    #defaultResult = testOrgs.testOrganism('TestCode/andTest.v', '.', 2, 1, 'andTest',clearFiles=True)
+    #simMap = testOrgs.SimulationMap(defaultResult)
     
-    testOrganism.evaluate(simMap)
+    #testOrganism.evaluate(simMap)
     
-    from copy import deepcopy
+    #from copy import deepcopy
     
     fakeTestOrganisms = [testOrganism]
     for i in xrange(5):
         tst = deepcopy(testOrganism)
-        tst.fitness = random.randint(0,2)
         fakeTestOrganisms.append(tst)
-    
+        
+    for org in fakeTestOrganisms:
+        org.fitness = random.randint(0,2)
+
     a = MakeOrganismPmfFromOrganisms(fakeTestOrganisms)
-    drawOrganismPmfAsCdf(a)
+    b = a.Copy()
+    print a,b
+    print a.d.items(),b.d.items()
+    drawOrganismPmfAsCdf(a,0)
     
     c = 0.0
     for i in xrange(1000):

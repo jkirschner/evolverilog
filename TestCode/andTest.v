@@ -1,8 +1,10 @@
-module andTest(out,A,B);
+module andTest(output0,input0,input1);
 
-    output out;
-    input A,B;
+	output output0;
+	input input0,input1;
 
-    and #50 (out,A,B);
+	wire output0;
+
+	xor #50 (output0,input0,input0);
 
 endmodule
