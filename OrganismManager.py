@@ -10,9 +10,10 @@
 import random
 import selector
 import matplotlib.pyplot as pyplot
+from copy import deepcopy
 
 class OrganismManager:
-    def __init__(self, organismType, population, survival, threshold, 
+    def __init__(self, organismType, population, survival, mutateNum, threshold, 
         resultMap, verilogWriteFileName = 'organism.v', 
         verilogModuleName = None, **kwargs):
         """
@@ -20,13 +21,16 @@ class OrganismManager:
             population : the maximum number of <Organism>s
             survival   : the number of <Organism>s that will survive
                          each generation
+            mutateNum  : the number of <Organism>s that will be only mutated
+                         The other organisms will be crossovered, not mutated
             threshold  : fitness at which the simulation stops
             resultMap  : <testOrgs.SimulationMap> of correct behavior
         """
         assert (survival > 0), "At least one Organism should survive."
         assert (population > 0), "At least one Organism should exist."
-        assert (population > survival), "population should be greater than " \
-                                         "survival."
+        assert (population >= survival + mutateNum), \
+                                         "population should be greater than " \
+                                         "survival and mutateNum."
         
         self.generationNumber = 0
         
@@ -35,7 +39,10 @@ class OrganismManager:
         self.organisms = []
         self.population = population
         self.survival = survival
+        self.mutateNum = mutateNum
         self.threshold = threshold
+
+        self.crossoverNum = population - (survival + mutateNum)
         
         self._resultMap = resultMap
         self._numberOfInputs = resultMap.getNumberOfInputs()
@@ -87,22 +94,35 @@ class OrganismManager:
     def updateOrganisms(self,visualize=False):
         """
             Return Type: void
-            1. Keep the (self.survival) best <Organism>s from the
-               previous generation
+            1. Keep (self.survival) <Organism>s from the
+               previous generation based on fitness
             2. Selects two <Organism>s from the list, crossover them and add
                a new <Organism>
             3. Repeat 2. (population - survival) times
             4. Sort the list by their fitness.
         """
-        newGeneration = self.organisms[0:self.survival]
+        newGeneration = [];
+        generatorPmf = self._selectorPmf.Copy()
+        for i in range(self.survival):
+            replicatedOrganism = generatorPmf.Random()
+            generatorPmf.Remove(replicatedOrganism)
+            generatorPmf.Normalize()
+            newGeneration.append(replicatedOrganism)
         
-        for i in range(self.population - self.survival):
+        generatorPmf = self._selectorPmf
+        for i in range(self.mutateNum):
+            replicatedOrganism = deepcopy(generatorPmf.Random())
+            replicatedOrganism.mutate()
+            newGeneration.append(replicatedOrganism)
+
+        for i in range(self.crossoverNum):
             p1,p2 = self.generateParents()
             # print parent1, "\nORGANISM crossing over with\n", parent2
             newOrganism = p1.crossover(p2)
-            newOrganism.mutate()
-            newOrganism.evaluate(self._resultMap)
             newGeneration.append(newOrganism)
+        
+        map( lambda organism : organism.evaluate(self._resultMap),
+             newGeneration)
         
         self.organisms = newGeneration
         self.organisms.sort(reverse = True)
@@ -162,14 +182,22 @@ if __name__ == '__main__':
     from TreeOrganism import TreeOrganism
     
     defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4,'fourBool',clearFiles=True)
+    #defaultResult = testOrgs.testOrganism('b4mux.v', '', 6, 1,'b4_1mux',clearFiles=True)
+    #defaultResult = testOrgs.testOrganism('4bAdder.v', '', 8, 5,'fourBitAdder',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
     
     pyplot.ion()
     #manager = OrganismManager(BooleanLogicOrganism,
     #    10,2,16,simMap,verilogWriteFileName = 'fourBool.v',nLayers = 1)
+    #manager = OrganismManager(TreeOrganism,
+    #    15,3,1,simMap,verilogWriteFileName = 'b4mux_organism.v',
+    #    maxDepth=10,inputProbability=.15)
     manager = OrganismManager(TreeOrganism,
-        15,3,16,simMap,verilogWriteFileName = 'fourBool.v',
+        50,10,20,16.1 - .01,simMap,verilogWriteFileName = 'fourBool.v',
         maxDepth=3,inputProbability=.2)
+    #manager = OrganismManager(TreeOrganism,
+    #    100,10,25,simMap,verilogWriteFileName = 'fourBitAdder_organism.v',
+    #    maxDepth=3,inputProbability=.2)
         
     manager.execute(True)
     pyplot.show()
