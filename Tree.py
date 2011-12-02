@@ -26,10 +26,8 @@ class Tree:
         child = deepcopy(self)
         nodeList = child.toList()
         otherNodeList = other.toList()
-        childNodeIndex = random.randint(0,len(nodeList)-1)
-        childNode = nodeList[childNodeIndex]
-        otherNodeIndex = random.randint(0, len(otherNodeList)-1)
-        otherNode = deepcopy(otherNodeList[otherNodeIndex])
+        childNode = random.choice(nodeList)
+        otherNode = deepcopy(random.choice(otherNodeList))
         #print "child node index: " + str(childNodeIndex)
         #print "other node index: " + str(otherNodeIndex)
         #childNode = random.choice(nodeList)
@@ -40,29 +38,31 @@ class Tree:
 
     def mutate(self):
         """
-            Return Type: <Tree>
+            Return Type: void
             Selects one of the <Node>s in a <Tree>, and replaces it with
             a new random <Node>.
         """
-        mutant = deepcopy(self)
-        nodeList = mutant.toList()
+        nodeList = self.toList()
         mutantNodeIndex = random.randint(0,len(nodeList)-1)
         mutantNode = nodeList[mutantNodeIndex]
 
         # Create a new random <Node>.
-        if (mutantNode.depth == mutantNode.maxDepth):
-            newNode = InputNode(mutantNode.parent, mutantNode.numOrganismInputs,
-                                mutantNode.depth,  mutantNode.maxDepth,
-                                mutantNode.inputProbability)
-        else:
+        #if (mutantNode.depth == mutantNode.maxDepth):
+        #    newNode = InputNode(mutantNode.parent, mutantNode.numOrganismInputs,
+        #                        mutantNode.depth,  mutantNode.maxDepth,
+        #                        mutantNode.inputProbability)
+        #else:
+        if (random.random() > mutantNode.inputProbability):
             newNode = Node(mutantNode.parent, mutantNode.numOrganismInputs,
                            mutantNode.depth,  mutantNode.maxDepth,
                            mutantNode.inputProbability)
+        else:
+            newNode = InputNode(mutantNode.parent, mutantNode.numOrganismInputs,
+                                mutantNode.depth,  mutantNode.maxDepth,
+                                mutantNode.inputProbability)
 
         # Replace the chosen <Node> with the new <Node>
         mutantNode.replaceSelf(newNode)
-        
-        return mutant
     
     def toList(self):
         """

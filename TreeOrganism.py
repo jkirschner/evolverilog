@@ -74,14 +74,13 @@ class TreeOrganism(Organism.AbstractOrganism):
 
     def mutate(self):
         """
-            Return Type: <TreeOrganism>
+            Return Type: void
             Mutates stuff
         """
         
         for i in range(len(self.trees)):
             if (random.random() < TreeOrganism.treeMutateProbability):
-                self.trees[i] = self.trees[i].mutate()
-        return
+                self.trees[i].mutate()
     
     def toVerilog(self, filepath, moduleName):
         """
@@ -111,15 +110,15 @@ class TreeOrganism(Organism.AbstractOrganism):
         # Needs to be implemented #
         
         score = 0.0
-        #for i in xrange(self.numOutputs):
-            #if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
-                #score += 1.0
-        score = sum( sum( 
+        for i in xrange(self.numOutputs):
+            if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
+                score += 2.0
+        score += sum( sum( 
                 int(correctOutputs[idx][i] == a[i]) 
                 for idx,a in enumerate(actualOutputs) ) / float(len(actualOutputs))
                      for i in xrange(self.numOutputs))
 
-        return (score)**2 + 0.1 - self.count()/1000. #+ random.random()
+        return (score) - self.count()/100 #**2 + 0.1 - self.count()/1000. #+ random.random()
         
     def getTrees(self):
         return self.trees

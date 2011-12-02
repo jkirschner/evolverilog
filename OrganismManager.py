@@ -216,7 +216,7 @@ def main():
     #    15,3,1,simMap,verilogWriteFileName = 'b4mux_organism.v',
     #    maxDepth=10,inputProbability=.15)
     manager = OrganismManager(TreeOrganism,
-        50,10,20, 16,simMap,verilogWriteFileName = 'fourBool.v',
+        50,5,10, 12,simMap,verilogWriteFileName = 'fourBool.v',
         maxDepth=3,inputProbability=.2)
     #manager = OrganismManager(TreeOrganism,
     #    100,10,25,simMap,verilogWriteFileName = 'fourBitAdder_organism.v',
