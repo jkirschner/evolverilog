@@ -88,10 +88,10 @@ class OrganismManager:
         return self._selectorPmf.Random()
 
     def generateParents(self):
-        generatorPmf = self._selectorPmf
+        generatorPmf = self._selectorPmf.Copy()
         parent1 = generatorPmf.Random()
-        #generatorPmf.Remove(parent1)
-        #generatorPmf.Normalize()
+        generatorPmf.Remove(parent1)
+        generatorPmf.Normalize()
         parent2 = generatorPmf.Random()
         return parent1,parent2
 
@@ -106,11 +106,11 @@ class OrganismManager:
             4. Sort the list by their fitness.
         """
         newGeneration = [];
-        generatorPmf = self._selectorPmf
+        generatorPmf = self._selectorPmf.Copy()
         for i in range(self.survival):
             replicatedOrganism = generatorPmf.Random()
-            #generatorPmf.Remove(replicatedOrganism)
-            #generatorPmf.Normalize()
+            generatorPmf.Remove(replicatedOrganism)
+            generatorPmf.Normalize()
             newGeneration.append(replicatedOrganism)
         
         generatorPmf = self._selectorPmf
@@ -216,7 +216,11 @@ def main():
     #    15,3,1,simMap,verilogWriteFileName = 'b4mux_organism.v',
     #    maxDepth=10,inputProbability=.15)
     manager = OrganismManager(TreeOrganism,
+<<<<<<< HEAD
         50,10,20,16,simMap,verilogWriteFileName = 'fourBool.v',
+=======
+        50,10,20, 16,simMap,verilogWriteFileName = 'fourBool.v',
+>>>>>>> bb152332a7a1ff6672eede4850540c111784a72b
         maxDepth=3,inputProbability=.2)
     #manager = OrganismManager(TreeOrganism,
     #    100,10,25,simMap,verilogWriteFileName = 'fourBitAdder_organism.v',
