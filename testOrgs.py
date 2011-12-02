@@ -150,17 +150,18 @@ class SimulationTrial:
         return "Inputs: %s. Outputs: %s"%(str(self.getInputs()),str(self.getOutputs()))
 
 def testOrganism(filepath, subdir, numInputs, numOutputs, 
-    organismModuleName, clearFiles=True, testFileName = 'organismTest'):
+    organismModuleName, clearFiles=True, testFileName = 'organismTest',
+    writeSim=True):
 
-    # verilogTestOutputFile,organismModuleFile,numInputs,numOutputs,organismModuleName=None
     # write the verilog test file
-    writeSimulation(
-        os.path.join(subdir,'%s.v'%testFileName),
-        filepath,
-        numInputs,
-        numOutputs,
-        organismModuleName
-        )
+    if writeSim:
+        writeSimulation(
+            os.path.join(subdir,'%s.v'%testFileName),
+            filepath,
+            numInputs,
+            numOutputs,
+            organismModuleName
+            )
     
     # print 'Testing organism: %s'%filepath
 
