@@ -18,7 +18,7 @@ class TreeOrganism(Organism.AbstractOrganism):
     treeMutateProbability = .1
 
     def __init__(self, verilogFilePath, numInputs, numOutputs, 
-        randomInit=False, maxDepth=10, inputProbability = .2, moduleName='organism'):
+        randomInit=False, maxDepth=10, inputProbability = .5, moduleName='organism'):
         # inputProbability should be reconsidered, and not just passed in
         # We should develop a way to decide what this value should be
 
@@ -113,12 +113,11 @@ class TreeOrganism(Organism.AbstractOrganism):
         for i in xrange(self.numOutputs):
             if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
                 score += 2.0
-        score += sum( sum( 
+            score += sum( 
                 int(correctOutputs[idx][i] == a[i]) 
                 for idx,a in enumerate(actualOutputs) ) / float(len(actualOutputs))
-                     for i in xrange(self.numOutputs))
 
-        return (score) - self.count()/100 #**2 + 0.1 - self.count()/1000. #+ random.random()
+        return (score) - self.count()/1000. #**2 + 0.1 - self.count()/1000. #+ random.random()
         
     def getTrees(self):
         return self.trees
