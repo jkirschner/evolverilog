@@ -1,5 +1,7 @@
 `include "exampleScootBot.v"
+
 module scootBotSimulator;
+
 	localparam WIDTH = 10;
 	localparam HEIGHT = 10;
 	localparam NUM_STEPS = 100;
@@ -11,12 +13,13 @@ module scootBotSimulator;
 	reg lUp, lRight, lDown, lLeft;
 	integer i;
 
+	scootBot uut (mUp, mRight, mDown, mLeft, lUp, lRight, lDown, lLeft, clk);
+
 	initial
 	begin
-	
-  	 repeat(WIDTH) begin
-  		  a[i] = 'b0010101001;
-   	end
+		for (i = 0; i < WIDTH; i = i + 1) begin
+			a[i] = 'b0010101001;
+		end
 
 		repeat(NUM_STEPS) begin
 			$display("x: %d\ty: %d", x, y);
@@ -29,7 +32,7 @@ module scootBotSimulator;
 			lRight=a[(x+1)%WIDTH][y];
 			lDown=a[x][(y-1)%HEIGHT];
 			lLeft=a[(x-1)%WIDTH][y];
-			scootBot (mUp, mRight, mDown, mLeft, lUp, lRight, lDown, lLeft, clk);
+			
 			#3000;
 			x = (x+mRight-mLeft)%WIDTH;
 			y = (y+mUp-mDown)%HEIGHT;
