@@ -22,9 +22,10 @@ module scootBotSimulator;
 		end
 
 		repeat(NUM_STEPS) begin
-			$display("x: %d\ty: %d", x, y);
+		
+			$display("%d,%d", x, y);
 			if (a[x][y] == 1'b1) begin
-				$display("Picked one up!");
+				$display("PickedUp");
 				a[x][y]=1'b0;
 			end
 			
@@ -36,7 +37,9 @@ module scootBotSimulator;
 			#3000;
 			x = (x+mRight-mLeft)%WIDTH;
 			y = (y+mUp-mDown)%HEIGHT;
+			
 		end
+		$finish;
 	end
 
 	always
