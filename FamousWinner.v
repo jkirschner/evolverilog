@@ -3,7 +3,8 @@
 //0010101001 * 10 of this row
 //the general behavior - it moves up and left, and when it sees something to its right it just moves right.
 //On the third run of a 20 generation limited evolution simulation, this solution in generation 13 was the first total solution to the map.
-//I'd like to point out that thanks to a simple self-xor, this bot never moves down.
+//I'd like to point out that thanks to a simple self-xor, this bot never moves down - was this a common good adaptation?
+//Interesting that this solution didn't use the clock at all - natural selection?
 
 module scootBot(output0,output1,output2,output3,input0,input1,input2,input3,input4);
 
