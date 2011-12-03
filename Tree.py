@@ -8,10 +8,13 @@
 """
 import random
 from copy import deepcopy
-import ete2
+import ete2a1 as ete2
+
 # Do the followings:
+
 # sudo apt-get install python-numpy python-qt4 python-scipy python-mysqldb python-setuptools
-# sudo easy_install -U ete2
+# Download: http://pypi.python.org/packages/source/e/ete2a1/ete2a1-ete2a1rev421.tar.gz#md5=f9c462d734d10fd02d5224927a8d2020
+# unzip it, and do   python setup.py install
 
 class Tree:
     def __init__(self, numOrganismInputs, maxDepth, inputProbability):
@@ -79,6 +82,31 @@ class Tree:
     
     def toVerilog(self,treeNum):
         return self.root.toVerilog(treeNum,'0')[0]
+
+    def visualize(self, filename):
+        """
+            Return Type: void
+            Visualize a tree and save it as a .png file
+        """
+        # Make a new <ete2.Tree>
+        raw = self.root.__str__()
+        tree = ete2.Tree("(" + raw + ")out;", format=1)
+        nodes = tree.get_descendants()
+        nodes.append(tree)
+
+        # Define a new TreeStyle
+        ts = ete2.TreeStyle()
+        ts.show_leaf_name = False
+
+        # Add TextFace to all the nodes
+        for c in nodes:
+            tf = ete2.TextFace(c.name)
+            tf.margin_left = 15
+            c.add_face(tf, column=0, position="branch-top")
+
+        # Show and render it
+        tree.show(tree_style=ts)
+        tree.render(filename, tree_style=ts)
         
 class Node:
     # Could include gate probabilities or weights so that buf is less likely
@@ -248,4 +276,5 @@ if __name__ == '__main__':
     tree.root.replaceSelf(tree2.root)
     print tree,'\n'
     print tree.toVerilog(0)
-    
+
+    #tree2.visualize('text.png')
