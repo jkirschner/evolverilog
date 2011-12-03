@@ -1,0 +1,39 @@
+#! /c/iverilog/bin/vvp
+:ivl_version "0.9.4 " "(v0_9_4)";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_005F2F88 .scope module, "scootBot" "scootBot" 2 1;
+ .timescale 0 0;
+L_005F32A0/d .functor NOT 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_005F32A0 .delay (50,50,50) L_005F32A0/d;
+L_005FD858/d .functor NOT 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_005FD858 .delay (50,50,50) L_005FD858/d;
+L_005FD8F8/d .functor BUF 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_005FD8F8 .delay (50,50,50) L_005FD8F8/d;
+L_005FFCE0/d .functor BUF 1, L_005FD8F8, C4<0>, C4<0>, C4<0>;
+L_005FFCE0 .delay (50,50,50) L_005FFCE0/d;
+L_005FFD80/d .functor NAND 1, L_005FD858, L_005FFCE0, C4<1>, C4<1>;
+L_005FFD80 .delay (50,50,50) L_005FFD80/d;
+L_005FFE58/d .functor XOR 1, C4<z>, C4<z>, C4<0>, C4<0>;
+L_005FFE58 .delay (50,50,50) L_005FFE58/d;
+L_005FFEF8/d .functor NOT 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_005FFEF8 .delay (50,50,50) L_005FFEF8/d;
+v005FD720_0 .net "input0", 0 0, C4<z>; 0 drivers
+v005FD778_0 .net "input1", 0 0, C4<z>; 0 drivers
+v005FD7D0_0 .net "input2", 0 0, C4<z>; 0 drivers
+v0065D410_0 .net "input3", 0 0, C4<z>; 0 drivers
+v0065D468_0 .net "input4", 0 0, C4<z>; 0 drivers
+v0065D4C0_0 .net "output0", 0 0, L_005F32A0; 1 drivers
+v0065D518_0 .net "output1", 0 0, L_005FFD80; 1 drivers
+v0065D570_0 .net "output1_branch00", 0 0, L_005FD858; 1 drivers
+v0065D5C8_0 .net "output1_branch01", 0 0, L_005FFCE0; 1 drivers
+v0065D620_0 .net "output1_branch010", 0 0, L_005FD8F8; 1 drivers
+v0065D678_0 .net "output2", 0 0, L_005FFE58; 1 drivers
+v0065D6D0_0 .net "output3", 0 0, L_005FFEF8; 1 drivers
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "Winner.v";
