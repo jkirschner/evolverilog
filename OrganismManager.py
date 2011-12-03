@@ -173,8 +173,9 @@ class OrganismManager:
         while self.organisms[0].getFitness() < self.threshold:
             self.generationNumber += 1
             self.updateOrganisms(visualize)
+        print "final fitness: ", self.organisms[0].getFitness()
         self.organisms[0].toVerilog('Winner.v', self.verilogModuleName)
-        self.deleteSimulation()
+        #self.deleteSimulation()
     
     def writeSimulation(self):
         testOrgs.writeSimulation(
@@ -195,7 +196,8 @@ class OrganismManager:
     
     def visualize(self):
         selector.drawOrganismPmfAsCdf(
-            self._selectorPmf, self.generationNumber
+            self._selectorPmf, self.generationNumber,
+            self.organisms[0].getFitness()
         )
         
 def main():
@@ -216,8 +218,8 @@ def main():
     #    15,3,1,simMap,verilogWriteFileName = 'b4mux_organism.v',
     #    maxDepth=10,inputProbability=.15)
     manager = OrganismManager(TreeOrganism,
-        50,12,13,12,simMap,verilogWriteFileName = 'fourBool.v',
-        maxDepth=3,inputProbability=.2)
+        50,12,13,11.999,simMap,verilogWriteFileName = 'fourBool.v',
+        maxDepth=3,inputProbability=.5)
     #manager = OrganismManager(TreeOrganism,
     #    100,10,25,simMap,verilogWriteFileName = 'fourBitAdder_organism.v',
     #    maxDepth=3,inputProbability=.2)

@@ -4,17 +4,24 @@
     Author      : Paul Booth, Shane Moon
     Date        : 11/17/11
     File Name   : Tree.py
-    Description : It's a tree to be evolved!
+    Description : It's a tree to be evolved!    
 """
 import random
 from copy import deepcopy
+import ete2
+# Do the followings:
+# sudo apt-get install python-numpy python-qt4 python-scipy python-mysqldb python-setuptools
+# sudo easy_install -U ete2
 
 class Tree:
     def __init__(self, numOrganismInputs, maxDepth, inputProbability):
         self.root = Node(None, numOrganismInputs, 0, maxDepth, inputProbability)
 
     def __str__(self):
-        return self.root.__str__()
+        raw = self.root.__str__()
+        t = ete2.Tree("(" + raw + ")out;", format=1)
+        return "Raw string (read from the end):\n%s \n\nVisualization:\n %s" \
+                %(raw, t.get_ascii(show_internal=True))
 
     def count(self):
         return self.root.count()
@@ -97,15 +104,17 @@ class Node:
         self.makeChildren(maxDepth)
 
     def __str__(self):
-        s = self.gate + "[" + str(self.numberOfInputs) + "]("
-        for child in self.children:
-            s +=  child.__str__() + ","
+        s = ""
+        if (not self.isInputNode):
+            s += "("
+            for child in self.children:
+                s +=  child.__str__() + ","
 
-        if (len(self.children) > 0):
-            s = s[0:-1] + ")"
-        else:
-            s += ")"
-        return s
+            if (len(self.children) > 0):
+                s = s[0:-1] + ")"
+            else:
+                s += ")"
+        return s + self.gate
 
     def count(self):
         count = 1

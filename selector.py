@@ -526,13 +526,12 @@ def saveFormat(root, format='eps'):
     print 'Writing', filename
     pyplot.savefig(filename, format=format, dpi=300)
 
-def drawOrganismPmfAsCdf(orgPmf, generationNumber):
-
+def drawOrganismPmfAsCdf(orgPmf, generationNumber, bestFitness):
     pyplot.clf()
     plotCdf(MakeCdfFromOrganismPmf(orgPmf))
     pyplot.xlabel('Fitness')
     pyplot.ylabel('Probability')
-    pyplot.title('Generation #%d: CDF of Fitnesses'%generationNumber)
+    pyplot.title('Generation #%d: CDF of Fitnesses. Best: %.2f'%(generationNumber, bestFitness))
     pyplot.draw()
 
 if __name__ == '__main__':
