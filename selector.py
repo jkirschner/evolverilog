@@ -527,7 +527,7 @@ def saveFormat(root, format='eps'):
     pyplot.savefig(filename, format=format, dpi=300)
 
 def drawOrganismPmfAsCdf(orgPmf, generationNumber):
-    
+
     pyplot.clf()
     plotCdf(MakeCdfFromOrganismPmf(orgPmf))
     pyplot.xlabel('Fitness')
