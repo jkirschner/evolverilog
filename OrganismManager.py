@@ -16,6 +16,7 @@ import os
 import cProfile
 import pstats
 import matplotlib.pyplot as pyplot
+from TreeOrganism import TreeOrganism
 
 class OrganismManager:
     def __init__(self, organismType, population, survival, mutateNum, terminator, 
@@ -162,7 +163,7 @@ class OrganismManager:
         randOrganism.evaluate(self._resultMap)
         return randOrganism
 
-    def execute(self,visualize=False):
+    def execute(self,visualize=False, filename=""):
         """
             Return Type: void
             MainLoop
@@ -188,6 +189,9 @@ class OrganismManager:
         if visualize:
             pyplot.show()
             pyplot.ioff()
+
+            if isinstance(bestOrganism,TreeOrganism):
+                bestOrganism.visualize(filename)
         
         return (self.terminator.getSuccess(),self.generationNumber)
         #self.deleteSimulation()
@@ -215,23 +219,6 @@ class OrganismManager:
             max(self.organisms,key=lambda org: org.getFitness()).getFitness()
         )
 
-class AbstractTerminator:
-    
-    def __init__(self,maxNumberOfGenerations):
-        
-        self.maxNumberOfGenerations = maxNumberOfGenerations
-        self.success = False
-        self.currentBestOrganism = None
-        
-    def isFinished(self,organism,generationNumber):
-        raise NotImplementedError
-        
-    def getSuccess(self):
-        return self.success
-        
-    def getBestOrganism(self):
-        return self.currentBestOrganism
-
 def main():
     
     import testOrgs
@@ -256,7 +243,7 @@ def main():
     #    100,10,25,simMap,verilogWriteFileName = 'fourBitAdder_organism.v',
     #    maxDepth=3,inputProbability=.2)
         
-    success, numberOfGenerations = manager.execute(False)
+    success, numberOfGenerations = manager.execute(True)
     print success, numberOfGenerations
 
 def profile():

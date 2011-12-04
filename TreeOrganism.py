@@ -11,7 +11,8 @@ import random
 import testOrgs
 import Organism
 import Tree
-from OrganismManager import AbstractTerminator
+from Terminator import AbstractTerminator
+import ete2a1 as ete2
 
 class TreeOrganism(Organism.AbstractOrganism):
 
@@ -33,8 +34,19 @@ class TreeOrganism(Organism.AbstractOrganism):
             moduleName=moduleName)
             
     def __str__(self):
-        contents = '\n-\n'.join(str(tree) for tree in self.trees)
-        return 'TreeOrganism: {\n%s, fitness: %s}'%(contents, str(self.fitness))
+        return self.toEteTree().get_ascii(show_internal=True)
+
+    def visualize(self, filename):
+        Tree.eteVisualize(self.toEteTree(), filename)
+
+    def toEteTree(self):
+        """
+            Return Type: <ete2.Tree>
+        """
+        raw = ""
+        for i in range(len(self.trees)):
+            raw += "(%s)out%s," %(self.trees[i].root.__str__(), str(i))
+        return ete2.Tree("(%s)org;" %raw[0:-1], format = 1)       
 
     def randomInitialize(self):
         """
@@ -170,8 +182,8 @@ if __name__ == '__main__':
     #print a
     #print b
 
-    tree1 = TreeOrganism('tree.v',4,2,randomInit=True,moduleName='tree')
-    tree2 = TreeOrganism('tree.v',4,2,randomInit=True,moduleName='tree')
+    tree1 = TreeOrganism('tree.v',4,2,randomInit=True,maxDepth=3,moduleName='tree')
+    tree2 = TreeOrganism('tree.v',4,2,randomInit=True,maxDepth=3,moduleName='tree')
 
     print "--------------------------------------"
     print tree1
@@ -180,7 +192,6 @@ if __name__ == '__main__':
     print "--------------------------------------"
     print tree1.crossover(tree2)
     print "--------------------------------------"
-    print "--------------------------------------"
-    print tree1
+    tree1.visualize('test.png')
     #tree1.toVerilog('delme.v','delme')
     #print 'toVerilog() method test successful (no errors)'
