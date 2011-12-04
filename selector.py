@@ -554,10 +554,11 @@ if __name__ == '__main__':
     for org in fakeTestOrganisms:
         org.fitness = random.randint(0,2)
 
+    print ['%.2f'%organism.getFitness() for organism in fakeTestOrganisms]
+    fakeTestOrganisms.sort()
+    print ['%.2f'%organism.getFitness() for organism in fakeTestOrganisms]
+    
     a = MakeOrganismPmfFromOrganisms(fakeTestOrganisms)
-    b = a.Copy()
-    print a,b
-    print a.d.items(),b.d.items()
     drawOrganismPmfAsCdf(a,0)
     
     c = 0.0

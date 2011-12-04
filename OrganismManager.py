@@ -130,6 +130,8 @@ class OrganismManager:
         
         self.organisms = newGeneration
         self.organisms.sort(reverse = True)
+        print max([organism.getFitness() for organism in self.organisms]),max([organism.getFitness() for organism in self.organisms])
+        print ['%.2f'%organism.getFitness() for organism in self.organisms]
         self._updateSelectorPmf()
         
         if visualize:

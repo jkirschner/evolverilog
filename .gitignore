@@ -4,3 +4,5 @@ fourBool.v
 Winner.v
 *.pyc
 *.orig
+*.o
+*.out
