@@ -11,6 +11,7 @@ import random
 import testOrgs
 import Organism
 import Tree
+from OrganismManager import AbstractTerminator
 
 class TreeOrganism(Organism.AbstractOrganism):
 
@@ -109,24 +110,56 @@ class TreeOrganism(Organism.AbstractOrganism):
         """
         # Needs to be implemented #
         
-        score = 0.0
+        bonus = 0.0
+        numCorrectOutputs = 0
         for i in xrange(self.numOutputs):
             if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
-                score += 2.0
-            score += sum( 
+                numCorrectOutputs += 1
+            bonus += sum( 
                 int(correctOutputs[idx][i] == a[i]) 
                 for idx,a in enumerate(actualOutputs) ) / float(len(actualOutputs))
+        
+        self.numCorrectOutputs = numCorrectOutputs
 
-        return (score) - self.count()/1000. #**2 + 0.1 - self.count()/1000. #+ random.random()
+        return (bonus+numCorrectOutputs*2.0) - self.count()/1000. #**2 + 0.1 - self.count()/1000. #+ random.random()
         
     def getTrees(self):
         return self.trees
     
     def replaceTree(self, tree, index):
         self.trees[index] = tree
+        
     def count(self):
         return sum(tree.count() for tree in self.trees)
+
+class TreeOrganismTerminator(AbstractTerminator):
+    
+    def __init__(self, maxNumberOfGates, maxNumberOfGenerations):
         
+        self.maxNumberOfGates = maxNumberOfGates
+        AbstractTerminator.__init__(self,maxNumberOfGenerations)
+    
+    def isFinished(self,organism,generationNumber):
+        
+        self.currentBestOrganism = organism
+        
+        if generationNumber > self.maxNumberOfGenerations:
+            end = True
+            self.success = False
+        else:
+            if organism.numCorrectOutputs == organism.numOutputs and \
+                organism.count() < self.maxNumberOfGates:
+                
+                end = True
+                self.success = True
+            
+            else:
+                
+                end = False
+                self.success = False
+            
+        return end
+
 if __name__ == '__main__':
     
     #defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 2, 'fourBool',clearFiles=True)

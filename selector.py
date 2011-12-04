@@ -553,6 +553,8 @@ if __name__ == '__main__':
         
     for org in fakeTestOrganisms:
         org.fitness = random.randint(0,2)
+    
+    print max(fakeTestOrganisms,key=lambda org: org.getFitness())
 
     print ['%.2f'%organism.getFitness() for organism in fakeTestOrganisms]
     fakeTestOrganisms.sort()

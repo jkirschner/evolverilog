@@ -24,6 +24,7 @@ class AbstractOrganism:
         self.numInputs = numInputs
         self.numOutputs = numOutputs
         self.fitness = None
+        self.numCorrectOutputs = 0
         
         if moduleName is None:
             moduleName = verilogFilePath.split('.')[0]
@@ -45,6 +46,7 @@ class AbstractOrganism:
         raise NotImplementedError, 'Must be overriden.'
         
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
+        # must set number of correct outputs
         raise NotImplementedError, 'Override this method in sub-classes.'
         
     def evaluate(self,correctResultMap):

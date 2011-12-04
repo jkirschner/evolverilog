@@ -116,9 +116,7 @@ class Node:
             ('or',(2,2)),
             ('not',(1,1)),
             ('nand',(2,2)),
-            ('xor',(2,2)),
-            ('buf', (1,1))
-            ]
+            ('xor',(2,2))] #removed buf
 
     def __init__(self, parent, numOrganismInputs, depth, maxDepth, inputProbability):
         self.parent = parent

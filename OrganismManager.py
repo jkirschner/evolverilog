@@ -15,9 +15,10 @@ from copy import deepcopy
 import os
 import cProfile
 import pstats
+import matplotlib.pyplot as pyplot
 
 class OrganismManager:
-    def __init__(self, organismType, population, survival, mutateNum, threshold, 
+    def __init__(self, organismType, population, survival, mutateNum, terminator, 
         resultMap, verilogWriteFileName = 'organism.v', 
         verilogModuleName = None, **kwargs):
         """
@@ -44,7 +45,7 @@ class OrganismManager:
         self.population = population
         self.survival = survival
         self.mutateNum = mutateNum
-        self.threshold = threshold
+        self.terminator = terminator
 
         self.crossoverNum = population - (survival + mutateNum)
         
@@ -129,9 +130,6 @@ class OrganismManager:
              newGeneration)
         
         self.organisms = newGeneration
-        self.organisms.sort(reverse = True)
-        print max([organism.getFitness() for organism in self.organisms]),max([organism.getFitness() for organism in self.organisms])
-        print ['%.2f'%organism.getFitness() for organism in self.organisms]
         self._updateSelectorPmf()
         
         if visualize:
@@ -146,7 +144,6 @@ class OrganismManager:
         for i in range(self.population):
             randOrganism = self.getRandomOrganism()
             self.organisms.append(randOrganism)
-        self.organisms.sort(reverse = True)
         self._updateSelectorPmf()
         
         if visualize:
@@ -172,11 +169,27 @@ class OrganismManager:
         """
         self.writeSimulation()
         self.populate(visualize)
-        while self.organisms[0].getFitness() < self.threshold:
+        
+        key = lambda org: org.getFitness()
+        
+        if visualize:
+            pyplot.ion()
+        
+        while not self.terminator.isFinished(
+            max(self.organisms,key=key),self.generationNumber
+            ):
             self.generationNumber += 1
             self.updateOrganisms(visualize)
-        print "final fitness: ", self.organisms[0].getFitness()
-        self.organisms[0].toVerilog('Winner.v', self.verilogModuleName)
+        
+        bestOrganism = self.terminator.getBestOrganism()
+        print "final fitness: ", bestOrganism.getFitness()
+        bestOrganism.toVerilog('Winner.v', self.verilogModuleName)
+        
+        if visualize:
+            pyplot.show()
+            pyplot.ioff()
+        
+        return (self.terminator.getSuccess(),self.generationNumber)
         #self.deleteSimulation()
     
     def writeSimulation(self):
@@ -199,36 +212,52 @@ class OrganismManager:
     def visualize(self):
         selector.drawOrganismPmfAsCdf(
             self._selectorPmf, self.generationNumber,
-            self.organisms[0].getFitness()
+            max(self.organisms,key=lambda org: org.getFitness()).getFitness()
         )
+
+class AbstractTerminator:
+    
+    def __init__(self,maxNumberOfGenerations):
         
+        self.maxNumberOfGenerations = maxNumberOfGenerations
+        self.success = False
+        self.currentBestOrganism = None
+        
+    def isFinished(self,organism,generationNumber):
+        raise NotImplementedError
+        
+    def getSuccess(self):
+        return self.success
+        
+    def getBestOrganism(self):
+        return self.currentBestOrganism
+
 def main():
-    import matplotlib.pyplot as pyplot
+    
     import testOrgs
     from BooleanLogic import BooleanLogicOrganism
-    from TreeOrganism import TreeOrganism
+    from TreeOrganism import TreeOrganism, TreeOrganismTerminator
     
     defaultResult = testOrgs.testOrganism('fourBoolCorrect.v', '', 4, 4,'fourBool',clearFiles=True)
     #defaultResult = testOrgs.testOrganism('b4mux.v', '', 6, 1,'b4_1mux',clearFiles=True)
     #defaultResult = testOrgs.testOrganism('4bAdder.v', '', 8, 5,'fourBitAdder',clearFiles=True)
     simMap = testOrgs.SimulationMap(defaultResult)
     
-    pyplot.ion()
     #manager = OrganismManager(BooleanLogicOrganism,
     #    10,2,16,simMap,verilogWriteFileName = 'fourBool.v',nLayers = 1)
     #manager = OrganismManager(TreeOrganism,
     #    15,3,1,simMap,verilogWriteFileName = 'b4mux_organism.v',
     #    maxDepth=10,inputProbability=.15)
-    manager = OrganismManager(TreeOrganism,
-        50,12,13,11.999,simMap,verilogWriteFileName = 'fourBool.v',
-        maxDepth=3,inputProbability=.5)
+    
+    manager = OrganismManager(TreeOrganism,50,12,13,
+        TreeOrganismTerminator(30,500),simMap,verilogWriteFileName='fourBool.v',
+        maxDepth=3,inputProbability=.8)
     #manager = OrganismManager(TreeOrganism,
     #    100,10,25,simMap,verilogWriteFileName = 'fourBitAdder_organism.v',
     #    maxDepth=3,inputProbability=.2)
         
-    manager.execute(True)
-    pyplot.show()
-    pyplot.ioff()
+    success, numberOfGenerations = manager.execute(False)
+    print success, numberOfGenerations
 
 def profile():
     cProfile.run('main()', 'profileResults')

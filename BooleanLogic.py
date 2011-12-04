@@ -23,12 +23,15 @@ class BooleanLogicOrganism(Organism.AbstractOrganism):
     
     def fitnessFunction(self,inputs,actualOutputs,correctOutputs):
         
-        score = 0.0
+        score = 0
         
         for i in xrange(self.nGates):
             if all( correctOutputs[idx][i] == a[i] for idx,a in enumerate(actualOutputs) ):
-                score += 1.0
-        return (score)**2 + 0.1
+                score += 1
+                
+        self.numCorrectOutputs = score
+                
+        return (score)**2.0 + 0.1
         
     def crossover(self, otherParent):
         """
