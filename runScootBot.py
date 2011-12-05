@@ -1,5 +1,6 @@
 import sys, os, subprocess, glob
 sys.modules["ete2"]="ignore"
+sys.modules["ete2a1"]="ignore"
 
 #From OrganismManager.py
 import testOrgs
@@ -160,6 +161,7 @@ class ScootBotOrganism(TreeOrganism.TreeOrganism):
                 clearFiles=False)
 
             self.fitness = self.fitnessFunction(testOutput)
+            print self.fitness
             #print testOutput
             #print "fitness: ", self.fitness
             #raw_input("press enter yo")
@@ -207,7 +209,7 @@ class ScootBotOrganism(TreeOrganism.TreeOrganism):
                 self.trees[i].mutate()
 
 def testScootBotOrganism(filepath, subdir, numInputs, numOutputs, 
-    organismModuleName, clearFiles=True, testFileName = 'simulateScootBot',
+    organismModuleName, clearFiles=True, testFileName = 'simulateScootBot2',
     writeSim=False):
 
     # write the verilog test file
@@ -255,8 +257,8 @@ def main():
     
     pyplot.ion()
     manager = ScootBotManager(ScootBotOrganism,
-        50,12,13,30,None,verilogWriteFileName = 'scootBot.v', #no simMap
-        verilogModuleName="scootBot", maxDepth=3,inputProbability=.5, maxGeneration=20)
+        50,12,13,35,None,verilogWriteFileName = 'scootBot.v', #no simMap
+        verilogModuleName="scootBot", maxDepth=3,inputProbability=.5, maxGeneration=100)
         
     manager.execute(True)
     pyplot.show()
