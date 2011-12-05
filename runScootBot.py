@@ -1,6 +1,6 @@
 import sys, os, subprocess, glob
-sys.modules["ete2"]="ignore"
-sys.modules["ete2a1"]="ignore"
+#sys.modules["ete2"]="ignore"
+#sys.modules["ete2a1"]="ignore"
 
 #From OrganismManager.py
 import testOrgs
@@ -119,24 +119,42 @@ class ScootBotManager(OrganismManager.OrganismManager):
             if visualize:
                 self.visualize()
 
-    def execute(self,visualize=False):
-            """
-                Return Type: void
-                MainLoop
-            """
-            self.writeSimulation()
-            self.populate(visualize)
-            while self.organisms[0].getFitness() < self.threshold and self.generationNumber < self.maxGeneration:
-                self.generationNumber += 1
-                self.updateOrganisms(visualize)
-            print "final fitness: ", self.organisms[0].getFitness()
-            self.organisms[0].toVerilog('Winner.v', self.verilogModuleName)
-            #self.deleteSimulation()
+    def execute(self,visualize=False,filename=''):
+        """
+            Return Type: void
+            MainLoop
+        """
+        
+        self.writeSimulation()
+        self.populate(visualize)
+        
+        key = lambda org: org.getFitness()
+        
+        if visualize:
+            pyplot.ion()
+        
+        while max(self.organisms,key=key).getFitness() < self.threshold \
+            and self.generationNumber < self.maxGeneration:
+            
+            self.generationNumber += 1
+            self.updateOrganisms(visualize)
+        
+        bestOrganism = max(self.organisms,key=key)
+        print "final fitness: ", bestOrganism.getFitness()
+        bestOrganism.toVerilog('Winner.v', self.verilogModuleName)
+        
+        if visualize:
+            pyplot.show()
+            pyplot.ioff()
 
+            if isinstance(bestOrganism,TreeOrganism.TreeOrganism):
+                bestOrganism.visualize(filename)
+
+        #self.deleteSimulation()
 
 class ScootBotOrganism(TreeOrganism.TreeOrganism):
     treeCrossOverProbability = .7
-    treeMutateProbability = .1
+    treeMutateProbability = .5
     def evaluate(self,correctResultMap):
         """
         Evaluates the fitness function of an organism if it has not
@@ -161,7 +179,8 @@ class ScootBotOrganism(TreeOrganism.TreeOrganism):
                 clearFiles=False)
 
             self.fitness = self.fitnessFunction(testOutput)
-            print self.fitness
+            
+            #print self.fitness
             #print testOutput
             #print "fitness: ", self.fitness
             #raw_input("press enter yo")
@@ -257,8 +276,8 @@ def main():
     
     pyplot.ion()
     manager = ScootBotManager(ScootBotOrganism,
-        50,12,13,35,None,verilogWriteFileName = 'scootBot.v', #no simMap
-        verilogModuleName="scootBot", maxDepth=3,inputProbability=.5, maxGeneration=100)
+        50,12,12,50,None,verilogWriteFileName = 'scootBot.v', #no simMap
+        verilogModuleName="scootBot",maxDepth=3,inputProbability=.85,maxGeneration=100)
         
     manager.execute(True)
     pyplot.show()
